@@ -1,0 +1,78 @@
+---
+title: "Example Report"
+author: "Tychobra"
+date: "`r Sys.time()`"
+output: html_document
+params:
+  exposure: NA
+  frequency: NA
+  retention_per_claim: NA
+  retention_aggregate: NA
+  trend: NA
+  trend_year: NA
+  development: NA
+  shock_cutoff: NA
+  shock_prob: NA
+  plot_func: NA
+  plot_args: NA
+  claims: NA
+---
+
+<style type="text/css">
+.table {
+  width: 200px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(scipen=999)
+library(dplyr)
+```
+
+<br />
+
+### Non Claim Inputs
+
+- **exposure:** `r format(params$exposure, big.mark = ",")`
+- **frequency:** `r params$frequency`
+- **retention per claim:** `r format(params$retention_per_claim, big.mark = ",")`
+- **retention aggregate:** `r format(params$retention_aggregate, big.mark = ",")`
+- **annual trend:** `r format(params$trend, big.mark = ",")`
+- **trend year:** `r params$trend_year`
+- **shock cutoff:** `r format(params$shock_cutoff, big.mark = ",")`
+- **shock probability:** `r paste0(params$shock_prob * 100, "%")`
+- **development factors:**
+
+```{r}
+out <- params$development
+names(out) <- c("Accident Year", "CDF")
+knitr::kable(out)
+```
+
+<br />
+
+### Plots
+
+```{r, warning=FALSE, results="asis"}
+library(highcharter)
+plot_args <- params$plot_args
+out <- vector("list", length = length(plot_args))
+for (i in seq_along(plot_args)) {
+  out[[i]] <- do.call(params$plot_func, plot_args[[i]])
+  
+}
+htmltools::tagList(out)  
+```
+
+<br />
+
+### Claims used to create sample for bootstrap
+
+```{r}
+out <- params$claims
+out <- out %>%
+  mutate(value = format(round(value, 2), big.mark = ","))
+
+knitr::kable(out, align = c("c", "c", "r"))
+```

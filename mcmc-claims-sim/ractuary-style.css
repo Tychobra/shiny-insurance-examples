@@ -1,0 +1,13 @@
+h1 {
+  display: inline;
+  font-size: 40px;
+}
+
+.well-title {
+  margin-top: 0;
+  text-align: center;
+}
+
+th {
+  text-align: center;
+}
