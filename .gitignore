@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-data/
+/wc-pm-dashboard/data/
 *.Rproj
 .DS_Store
 rsconnect/
