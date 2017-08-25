@@ -1,13 +1,15 @@
-claims-sim-general
+mcmc-claims-sim
 ==================
 
-This Shiny application generates frequency/severity insurance claims simulations.  A live version of the app is hosted [here](https://merlinoa.shinyapps.io/claims-sim-general/).
+This Shiny application generates frequency/severity insurance claims simulations.  A frequency severity simulation is a very simple Markov Chain Monte Carlo (MCMC).
+
+[LIVE DEMO](https://tychobra.shinyapps.io/mcmc-claims-sim/).
 
 ## Background
 
 Insurers are interested in the probabilities that their exposures will result in certain loss amounts.  One quick way insurers estimate probabilities for these loss amounts is to run frequency/severity claims simulations.
 
-A frequency/severity claims simulation randomly simulates a frequency (i.e. number of claims), and then simulates a random severity (i.e. loss amount) for each of these claims.  The severity simulation represents the total loss amount to settle each claim.  We refer to each of these frequency/severity simulations as an observation.  e.g. An observation with 4 claims might look like this:  
+A frequency/severity claims simulation randomly simulates a frequency (i.e. number of claims), and then simulates a random severity (i.e. loss amount) for each of these claims.  The severity simulation represents the total loss amount to settle each claim.  We refer to each of these frequency/severity simulations as an observation.  e.g. An observation with 4 claims might look like this:
 
 | Claim ID | Loss Amount |
 |:--------:|------------:|
@@ -27,7 +29,7 @@ Once we have simulated the claims, we can then easily apply per claim and aggreg
 |   D      |     5,000   |      5,000           |         0          |
 | **Total**| **335,000** |  **255,000**         |  **80,000**        |
 
-In our example observation above, the excess reinsurance contract with a per claim retention limit of 100,000 paid 80,000 in excess recoveries.  We did not apply an aggregate limit.  This is just one example observation.  By simulating many observations we can estimate the probabilities of experiencing different loss amounts.  We can use different combinations of frequency and severity distributions and a variety of retention limits to resemble the insurer's exposures.
+In our example observation above, the excess reinsurance contract with a per claim retention limit of 100,000 paid 80,000 in excess recoveries.  We did not apply an aggregate limit.  This is just one example observation.  By simulating many observations we can use the distribution of the observations to estimate the probabilities of experiencing different loss amounts.  We can use different combinations of frequency and severity distributions and a variety of retention limits to resemble the insurer's exposures.
 
 ## This App
 
@@ -38,5 +40,5 @@ This app has options to use several differenct probability distributions from th
 This app makes fairly simple frequency/severity simulations.  To make simulations more accurately resemble actual claims payments insurers will generally include:
 
 - Multiple frequency and severity distributions to represent different types of claims
-- A variety of retention limits and deductible
+- A variety of retention limits and deductibles
 - Severity simulations that simulate payments over time as opposed to a single total loss simulation
