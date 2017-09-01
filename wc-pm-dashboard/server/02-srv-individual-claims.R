@@ -193,13 +193,25 @@ sel_sim <- reactive({
   preds %>% filter(claim_num == sel_claim_num)
 })
 
+sel_claim_cl <- reactive({
+  quantile(sel_sim()$payment_sim, probs = input$claim_cl / 100)
+})
+
 output$indiv_claim_sim <- renderHighchart({
   req(sel_claim()$pd_incr_act)
   payment_act <- sel_claim()$pd_incr_act
+  cl <- sel_claim_cl()
+  
+  if (payment_act < input$claim_cl) {
+    actual_color <- my_colors$green
+  } else {
+    actual_color <- my_colors$red
+  }
   
   hchart(
     sel_sim()$payment_sim,
-    breaks = 30
+    breaks = 30,
+    color = my_colors$grey
   ) %>%
     hc_title(text = paste0("Payment Simulation for Claim ", sel_claim()$claim_num)) %>%
     hc_subtitle(text = "Predicted Distribution of Possible Payments between Age 1 and 2") %>%
@@ -215,9 +227,18 @@ output$indiv_claim_sim <- renderHighchart({
           label = list(
             text = paste0("Actual =", format(round(payment_act, 0), big.mark = ","))
           ),
-          color = "#FF0000",
+          color = actual_color,
           width = 2,
           value = payment_act,
+          zIndex = 5
+        ),
+        list(
+          label = list(
+            text = paste0(names(cl), " Confidence Level = ", format(round(cl, 0), big.mark = ","))
+          ),
+          color = my_colors$blue,
+          width = 2,
+          value = unname(cl),
           zIndex = 5
         )
       ),

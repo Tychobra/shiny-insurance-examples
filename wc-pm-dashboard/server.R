@@ -7,6 +7,7 @@ function(input, output, session) {
   
   source("./server/01-srv-overview.R", local = TRUE)
   source("./server/02-srv-individual-claims.R", local = TRUE)
-  source("./server/03-srv-tour.R", local = TRUE)
+  
+  source("./server/99-srv-tour.R", local = TRUE)
 }
 

@@ -105,9 +105,20 @@ tabItem(
             highchartOutput(
               "indiv_claim_sim",
               height = '450px'
+            ),
+            column(
+              width = 12,
+              sliderInput(
+                "claim_cl",
+                "Confidence Level",
+                min = 1,
+                max = 99,
+                value = 95,
+                step = 1
+              )
             )
           )
-        )  
+        )
       ),
       column(
         width = 3,
