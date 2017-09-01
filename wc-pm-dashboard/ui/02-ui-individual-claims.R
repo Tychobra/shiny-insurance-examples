@@ -4,9 +4,14 @@ tabItem(
     column(
       width = 9,
       fluidRow(
-        valueBoxOutput("ind_claim_cts"),
-        valueBoxOutput("ind_severity"),
-        valueBoxOutput("ind_severity_sd")
+        box(
+          width = 12,
+          title = "Summary Stats",
+          collapsible = TRUE,
+          valueBoxOutput("ind_claim_cts"),
+          valueBoxOutput("ind_severity"),
+          valueBoxOutput("ind_severity_sd")
+        )
       ),
       fluidRow(
         box(
@@ -15,7 +20,7 @@ tabItem(
           highchartOutput(
             "indiv_claims_plot",
             height = '450px'
-          )
+          ) 
         )
       )
     ),

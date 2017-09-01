@@ -12,6 +12,7 @@ sidebar <- dashboardSidebar(
     menuItem("Individual Claims", tabName = "claims", icon = icon("folder")),
     column(
       width = 12,
+      br(),
       actionButton("tour", "Tour this Tab", width='100%', style="margin: 0", class="btn btn-info")  
     )
   )

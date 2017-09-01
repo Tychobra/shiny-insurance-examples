@@ -25,9 +25,23 @@ tabItem(
           conditionalPanel(
             condition = "input.metric == 'payment'",
             highchartOutput("payment_per_sim_plot")
-          ) 
+          ),
+          column(
+            width = 12,
+            id = "tour_7",
+            sliderInput(
+              "overview_interval",
+              "Confidence Interval",
+              value = c(5, 95),
+              min = 0,
+              max = 100,
+              post = "%",
+              step = 1
+            ) 
+          )
         )
-      )
+      )#,
+      #verbatimTextOutput("debuggin")
     ),
     column(
       width = 3,

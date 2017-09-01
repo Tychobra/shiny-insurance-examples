@@ -1,7 +1,5 @@
 library(shinydashboard)
 library(dplyr)
-library(ggplot2)
-library(plotly)
 library(highcharter)
 library(lubridate)
 library(shinyWidgets)
@@ -16,16 +14,12 @@ hcoptslang <- getOption("highcharter.lang")
 hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
 
-
-# save the data in this project
-# need to do this so app can be deployed to shinyapps.io
-#dat <- readRDS("../pm-loss-runs/data/shiny-model-fit-dat.RDS") %>%
-#  arrange(doa)
-#saveRDS(dat, "./data/shiny-model-fit-dat.RDS")
-#preds <- readRDS("../pm-loss-runs/data/simulated/claim-payments.RDS") %>% 
-#           mutate(ay = year(doa))
-#saveRDS(preds, "./data/claim-payments.RDS")
-
+my_colors <- list(
+  "green" = "#00a65a",
+  "red"   = "#FF0000",
+  "blue"  = "#428bca",
+  "grey"  = "#D3D3D3"
+)
 
 # load data
 dat <- readRDS("./data/shiny-model-fit-dat.RDS")

@@ -14,29 +14,36 @@ observeEvent(input$tour, {
           ),
           list(
             element = "#tour_2",
-            intro = "This tab shows the aggregate results of the model predictions.  These outputs are displaying the summarization of 
-            all of the predicted claims",
+            intro = "This tab shows the aggregate results of the model predictions.  These outputs are displaying a summarization of 
+            all of the predicted claim amounts combined",
             position = "left"
           ),
           list(
             element = "#tour_3",
-            intro = "The 'Metric' specificies either
-            incremental payments from age 1 to age 2 or status at age 2"
+            intro = "The 'Metric' allows you to select either
+            incremental payments from age 1 to age 2 or status at age 2 (status can be 'open' or 'closed')."
           ),
           list(
             element = "#tour_4",
-            intro = "The 'Filters' are used to remove claims from the data.  By default all the claims are included,
+            intro = "The 'Filters' allow you to remove claims from the data.  By default all the claims are included,
             but by adjusting the filters you can remove certain types of claims."
           ),
           list(
             element = "#tour_5",
             intro = "The boxes show the predicted total (left), the standard deviation of the predicted total (middle),
-            and the actual total (right) for either payments or status"
+            and the actual total (right) (In this example app, we know the actual results, but in a production
+            application the actual results would not have occurred yet.)"
           ),
           list(
             element = "#tour_6",
-            intro = "The histogram shows the distribution of predicted payments or status for all claims.  The blue
-            columns represent the probabilities predicted by the model.  The red line shows the actual amount."
+            intro = "The grey columns represent the distribution of possible outcomes predicted by the model.  You can
+            download the plot by clicking the button in the top-right corner"
+          ),
+          list(
+            element = "#tour_7",
+            intro = "You can adjust the predicted confidence interval here which will be displayed with the blue lines 
+            in the plot.  The actual amount is displayed with a green line if it is within the selected confidence interval
+            and a red line if it lies outside the interval."
           )
         )
       )
