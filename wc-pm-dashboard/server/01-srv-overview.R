@@ -173,6 +173,9 @@ output$open_per_sim_plot <- renderHighchart({
     ) %>%
     hc_title(text = "Claim Status Simulation") %>%
     hc_subtitle(text = "Predicting Status at Age 2 given data at Age 1") %>%
+    hc_tooltip(
+      enabled = FALSE
+    ) %>%
     hc_exporting(
       enabled = TRUE,
       buttons = tychobratools::hc_btn_options()
@@ -240,6 +243,7 @@ output$payment_per_sim_plot <- renderHighchart({
     ) %>%
     hc_title(text = "Claim Payments Simulation") %>%
     hc_subtitle(text = "Between Age 1 and Age 2") %>%
+    hc_tooltip(enabled = FALSE) %>%
     hc_exporting(
       enabled = TRUE,
       buttons = tychobratools::hc_btn_options()

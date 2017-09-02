@@ -215,6 +215,7 @@ output$indiv_claim_sim <- renderHighchart({
   ) %>%
     hc_title(text = paste0("Payment Simulation for Claim ", sel_claim()$claim_num)) %>%
     hc_subtitle(text = "Predicted Distribution of Possible Payments between Age 1 and 2") %>%
+    hc_tooltip(enabled = FALSE) %>%
     hc_exporting(
       enabled = TRUE,
       buttons = tychobratools::hc_btn_options()
