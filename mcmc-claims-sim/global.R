@@ -6,6 +6,7 @@ library(DT)
 library(dplyr)
 library(rintrojs)
 library(shinycssloaders)
+library(tychobratools)
 
 # turn off scientific notation
 options(scipen=999)

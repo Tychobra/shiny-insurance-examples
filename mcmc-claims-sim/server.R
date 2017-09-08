@@ -1,26 +1,3 @@
-hc_btn_options <- list(
-  contextButton = list(
-    menuItems = list(
-      list(
-        text = "Export to PDF",
-        onclick = JS(
-          "function () { this.exportChart({
-          type: 'application/pdf'
-          }); }"
-        )
-      ),
-      list(
-        text = "Export to SVG",
-        onclick = JS(
-          "function () { this.exportChart({
-          type: 'image/svg+xml'
-          }); }"
-        )
-      )
-    )
-  )
-)
-
 function(input, output, session) {
   
   observeEvent(input$tour, {
@@ -190,7 +167,7 @@ function(input, output, session) {
       hc_subtitle(text = plot_subtitle()) %>%
       hc_exporting(
         enabled = TRUE,
-        buttons = hc_btn_options
+        buttons = tychobratools::hc_btn_options()
       ) %>%
       hc_legend(enabled = FALSE) %>%
       hc_xAxis(
@@ -234,7 +211,7 @@ function(input, output, session) {
       hc_subtitle(text = plot_subtitle()) %>%
       hc_exporting(
         enabled = TRUE,
-        buttons = hc_btn_options
+        buttons = tychobratools::hc_btn_options()
       ) %>%
       hc_legend(enabled = FALSE) %>%
       hc_xAxis(
