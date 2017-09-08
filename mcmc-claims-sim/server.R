@@ -4,9 +4,9 @@ function(input, output, session) {
   # determine parameters and default values belonging for frequency distribution
   freq_param_labels <- reactive({
     switch(input$freq_dist,
-           "poisson" = list(params = "lambda", values = 10),
-           "binomial" = list(params = c("q", "m"), values = c(0.2, 12)),
-           "nbinomial" = list(params = c("r", "B"), values = c(2, 5))
+      "poisson" = list(params = "lambda", values = 10),
+      "binomial" = list(params = c("q", "m"), values = c(0.8, 12)),
+      "nbinomial" = list(params = c("r", "B"), values = c(2, 5))
     )
   })
   
@@ -21,6 +21,29 @@ function(input, output, session) {
           value = freq_param_labels()[["values"]][i])
       )
     })
+  })
+  
+  implied_freq_mean <- reactive({
+    switch(input$freq_dist,
+      "poisson" = input$poisson_lambda,
+      "binomial" = input$binomial_m * input$binomial_q,
+      "nbinomial" = input$nbinomial_r * input$nbinomial_B
+    )
+  })
+  
+  implied_freq_sd <- reactive({
+    switch(input$freq_dist,
+      "poisson" = sqrt(input$poisson_lambda),
+      "binomial" = sqrt(input$binomial_m * input$binomial_q * (1.0 - input$binomial_q)),
+      "nbinomial" = sqrt(input$nbinomial_r * input$nbinomial_B * (1.0 + input$nbinomial_B))
+    )
+  })
+  
+  output$implied_freq_mean_out <- renderText({
+    paste0("Mean: ", format(implied_freq_mean(), big.mark = ","))
+  })
+  output$implied_freq_sd_out <- renderText({
+    paste0("SD: ", format(round(implied_freq_sd(), 2), big.mark = ","))
   })
   
   # create input boxes for severity parameters
@@ -54,11 +77,11 @@ function(input, output, session) {
      freq <- switch(input$freq_dist,
                      "poisson" = rpois(input$obs, lambda = input$poisson_lambda),
                      "binomial" = rbinom(input$obs, size = input$binomial_m, 
-                                         prob = (1 - input$binomial_q)),
+                                         prob = input$binomial_q),
                      "nbinomial" = rnbinom(input$obs, size = input$nbinomial_r, 
                                                 prob = (1 / (1 + input$nbinomial_B)))
       )
-      
+      #print(freq)
      switch(input$sev_dist,
              "lognormal" = lapply(freq, function(x) rlnorm(x, meanlog = input$lognormal_mu, sdlog = input$lognormal_sigma)),
              "pareto" = lapply(freq, function(x) rpareto(x, scale = input$pareto_theta, shape = input$pareto_alpha)),
@@ -73,9 +96,11 @@ function(input, output, session) {
   tidy_claims <- reactive({
     
     ult_hold <- ult()
-    
+    print(ult_hold[[1]])
     out <- lapply(1:length(ult_hold), function(x) {
-      data.frame("sim" = x, "severity" = ult_hold[[x]])
+      if (length(ult_hold[[x]]) > 0) {
+        data.frame("sim" = x, "severity" = ult_hold[[x]])
+      }
     })
     
     bind_rows(out) %>%

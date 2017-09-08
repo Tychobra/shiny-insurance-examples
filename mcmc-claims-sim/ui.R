@@ -72,6 +72,19 @@ fluidPage(
           h4("Parameters"),
           fluidRow(
             uiOutput("freq_param_boxes") 
+          ),
+          h4("Implied Stats"),
+          fluidRow(
+            column(
+              6,
+              style = "text-align: center",
+              textOutput("implied_freq_mean_out")
+            ),
+            column(
+              6,
+              style = "text-align: center",
+              textOutput("implied_freq_sd_out")
+            )
           )
         ),
         br(),
