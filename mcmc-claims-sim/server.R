@@ -1,14 +1,5 @@
 function(input, output, session) {
-  
-  observeEvent(input$tour, {
-    introjs(session,
-      options = list(
-        "nextLabel" = "Next",
-        "prevLabel" = "Back",
-        "skipLabel" = "Close Tour"
-      )
-    ) 
-  })
+  source("zz-tour.R", local = TRUE)
   
   # determine parameters and default values belonging for frequency distribution
   freq_param_labels <- reactive({
