@@ -100,6 +100,19 @@ fluidPage(
           h4("Parameters"),
           fluidRow(
             uiOutput("sev_param_boxes") 
+          ),
+          h4("Implied Stats"),
+          fluidRow(
+            column(
+              6,
+              style = "text-align: center",
+              textOutput("implied_sev_mean_out")
+            ),
+            column(
+              6,
+              style = "text-align: center",
+              textOutput("implied_sev_sd_out")
+            )
           )
         )
       )

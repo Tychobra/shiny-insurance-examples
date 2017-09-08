@@ -40,9 +40,11 @@ function(input, output, session) {
   })
   
   output$implied_freq_mean_out <- renderText({
+    req(implied_freq_mean())
     paste0("Mean: ", format(implied_freq_mean(), big.mark = ","))
   })
   output$implied_freq_sd_out <- renderText({
+    req(implied_freq_sd())
     paste0("SD: ", format(round(implied_freq_sd(), 2), big.mark = ","))
   })
   
@@ -92,11 +94,41 @@ function(input, output, session) {
      
   })
   
+  implied_sev_mean <- reactive({
+    switch(input$sev_dist,
+      "lognormal" = exp(input$lognormal_mu + (input$lognormal_sigma ^ 2) / 2),
+      "pareto" = (input$pareto_alpha * input$pareto_theta) / (input$pareto_alpha - 1),
+      "exponential" = input$exponential_theta,
+      "gamma" = input$gamma_alpha * input$gamma_theta,
+      "weibull" = input$weibull_theta * gamma(1 + 1 / input$weibull_tau)
+    )
+  })
+  
+  implied_sev_sd <- reactive({
+    # note: reactive vals inside of switch statement do not trigger the reactive for some reason
+    switch(input$sev_dist,
+      "lognormal" = sqrt((exp(input$lognormal_sigma ^ 2) - 1.0) * exp(2 * input$lognormal_mu + input$lognormal_sigma ^ 2)),
+      "pareto" = sqrt((input$pareto_alpha * input$pareto_theta ^ 2) / input$pareto_alpha ^ 2),
+      "exponential" = input$exponential_theta,
+      "gamma" = sqrt(input$gamma_alpha * input$gamma_theta ^ 2),
+      "weibull" = sqrt(input$weibull_theta ^ 2 * (gamma(1 + 2 / input$weibull_tau) + (gamma(1 + 1 / input$weibull_tau)) ^ 2))
+    )
+  })
+  
+  output$implied_sev_mean_out <- renderText({
+    req(implied_sev_mean())
+    paste0("Mean: ", format(round(implied_sev_mean(), 0), big.mark = ","))
+  })
+  output$implied_sev_sd_out <- renderText({
+    req(implied_sev_sd())
+    paste0("SD: ", format(round(implied_sev_sd(), 0), big.mark = ","))
+  })
+  
   # convert list of claims into matrix
   tidy_claims <- reactive({
     
     ult_hold <- ult()
-    print(ult_hold[[1]])
+    #print(ult_hold[[1]])
     out <- lapply(1:length(ult_hold), function(x) {
       if (length(ult_hold[[x]]) > 0) {
         data.frame("sim" = x, "severity" = ult_hold[[x]])
