@@ -40,12 +40,13 @@ function(input, output, session) {
   })
   
   output$implied_freq_mean_out <- renderText({
-    req(implied_freq_mean())
+    req(is.numeric(implied_freq_mean()), cancelOutput = TRUE)
     paste0("Mean: ", format(implied_freq_mean(), big.mark = ","))
   })
   output$implied_freq_sd_out <- renderText({
-    req(implied_freq_sd())
-    paste0("SD: ", format(round(implied_freq_sd(), 2), big.mark = ","))
+    # ?? for some reason red error message flashing when using implied_freq_sd in req 
+    req(is.numeric(implied_freq_mean()), cancelOutput = TRUE)
+    paste0("SD: ", format(round(implied_freq_sd(), 2), big.mark = ","))  
   })
   
   # create input boxes for severity parameters
@@ -116,11 +117,11 @@ function(input, output, session) {
   })
   
   output$implied_sev_mean_out <- renderText({
-    req(implied_sev_mean())
+    req(is.numeric(implied_sev_mean()))
     paste0("Mean: ", format(round(implied_sev_mean(), 0), big.mark = ","))
   })
   output$implied_sev_sd_out <- renderText({
-    req(implied_sev_sd())
+    req(is.numeric(implied_sev_sd()))
     paste0("SD: ", format(round(implied_sev_sd(), 0), big.mark = ","))
   })
   
