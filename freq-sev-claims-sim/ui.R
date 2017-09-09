@@ -14,15 +14,10 @@ fluidPage(
           href = "https://tychobra.com/shiny"
         ),
         h1("Frequency/Severity Loss Simulation"),
-        fluidRow(
-          column(
-            width = 12,
-            actionButton(
-              "tour", 
-              "Take a Tour",
-              class = "btn btn-info"
-            )
-          )
+        actionButton(
+          "tour", 
+          "Take a Tour",
+          class = "btn btn-info pull-right"
         )
       ), 
       windowTitle = "Loss Simulation"
@@ -122,12 +117,15 @@ fluidPage(
       width = 9,
       fluidRow(
         column(
+          width = 2
+        ),
+        column(
           width = 8,
           wellPanel(
             h3(
               id = "tour_6",
               class = "well-title",
-              "Retention Limits"
+              "Retention"
             ),
             fluidRow(
               column(
@@ -135,7 +133,7 @@ fluidPage(
                 id = "tour_7",
                 numericInput(
                   inputId = "specific_lim", 
-                  label = "Per Claim Limit", 
+                  label = "Per Claim", 
                   value = 250000
                 )
               ),
@@ -144,7 +142,7 @@ fluidPage(
                 id = "tour_8",
                 numericInput(
                   inputId = "agg_lim", 
-                  label = "Aggregate (per observation) Limit", 
+                  label = "Aggregate (per observation)", 
                   value = 750000
                 )
               )
