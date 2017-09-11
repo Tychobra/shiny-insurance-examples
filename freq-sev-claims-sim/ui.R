@@ -55,7 +55,7 @@ fluidPage(
           )
         ),
         br(),
-        hr(),
+        hr(style="border-color: #000"),
         div(
           id = "tour_4",
           h3("Frequency", class = "well-title"),
@@ -68,7 +68,7 @@ fluidPage(
           fluidRow(
             uiOutput("freq_param_boxes") 
           ),
-          h4("Implied Stats"),
+          h4("Distribution Summary Stats"),
           fluidRow(
             column(
               6,
@@ -83,7 +83,7 @@ fluidPage(
           )
         ),
         br(),
-        hr(),
+        hr(style="border-color: #000"),
         div(
           id = "tour_5",
           h3("Severity", class = "well-title"),
@@ -96,7 +96,7 @@ fluidPage(
           fluidRow(
             uiOutput("sev_param_boxes") 
           ),
-          h4("Implied Stats"),
+          h4("Distribution Summary Stats"),
           fluidRow(
             column(
               6,
@@ -193,14 +193,15 @@ fluidPage(
                   id = "tour_10",
                   highchartOutput("hist_plot_total") %>% withSpinner()
                 )
+              ),
+              hr(),
+              fluidRow(
+                column(
+                  12,
+                  highchartOutput("hist_plot_ceded") %>% withSpinner()
+                )
               )
             ),
-            # tabPanel(
-            #   title = "CDF",
-            #   br(),
-            #   plotOutput("cdf"),
-            #   plotOutput("cdf_total")
-            # ),
             tabPanel(
               title = "Confidence Level Table",
               br(),

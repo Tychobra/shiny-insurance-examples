@@ -165,7 +165,8 @@ function(input, output, session) {
       out <- out %>% mutate(total_net_agg = pmin(total_net_specific, input$agg_lim))
     }
     
-    out  
+    out %>%
+      mutate(total_ceded = total_gross - total_net_agg)
   })
   
   # start of output ----------------------------------------------------------
@@ -205,14 +206,14 @@ function(input, output, session) {
   
   output$hist_plot <- renderHighchart({
     agg <- ob_total()
-    
+    print(head(agg))
     net_mean <- round(mean(agg$total_net_agg), 0)
     quant_sel <- unname(quant_agg()) %>% round(0)
     quant_pct <- names(quant_agg())
     
     
     hchart(agg$total_net_agg) %>% 
-      hc_title(text = "Losses: Net of Excess Recoveries") %>%
+      hc_title(text = "Retained Losses: Net of Excess Recoveries") %>%
       hc_subtitle(text = plot_subtitle()) %>%
       hc_exporting(
         enabled = TRUE,
@@ -249,14 +250,59 @@ function(input, output, session) {
   })
   
   output$hist_plot_total <- renderHighchart({
+     totes <- ob_total()
+     
+     totes_mean <- mean(totes$total_gross)
+     quant_sel <- unname(quant_totes()) %>% round(0)
+     quant_pct <- names(quant_totes())
+     
+     hchart(totes$total_gross) %>%
+       hc_title(text = "Gross Losses: Gross of Excess Recoveries") %>%
+       hc_subtitle(text = plot_subtitle()) %>%
+       hc_exporting(
+         enabled = TRUE,
+         buttons = tychobratools::hc_btn_options()
+       ) %>%
+       hc_legend(enabled = FALSE) %>%
+       hc_xAxis(
+         title = list(text = "Gross Loss"),
+         plotLines = list(
+           list(
+             label = list(
+               text = paste0("mean = ", format(round(totes_mean, 0), big.mark = ","))
+             ),
+             color = "#FF0000",
+             width = 2,
+             value = totes_mean,
+             zIndex = 5
+           ),
+           list(
+             label = list(text = paste0(quant_pct, " Confidence Level = ", format(quant_sel, big.mark = ","))),
+             color = "#FF0000",
+             width = 2,
+             value = quant_sel,
+             zIndex = 5
+           )
+         )
+       ) %>%
+       hc_yAxis(
+         title = list(text = "Number of Observations")
+       )
+  })
+  
+  quant_ceded <- reactive({
+    quantile(ob_total()$total_ceded, input$ci)
+  })
+  
+  output$hist_plot_ceded <- renderHighchart({
     totes <- ob_total()
     
-    totes_mean <- mean(totes$total_gross)
-    quant_sel <- unname(quant_totes()) %>% round(0)
-    quant_pct <- names(quant_totes())
+    ceded_mean <- mean(totes$total_ceded)
+    quant_sel <- unname(quant_ceded()) %>% round(0)
+    quant_pct <- names(quant_ceded())
     
-    hchart(totes$total_gross) %>%
-      hc_title(text = "Losses: Gross of Excess Recoveries") %>%
+    hchart(totes$total_ceded, breaks = "Scott") %>%
+      hc_title(text = "Ceded Losses: Excess Recoveries") %>%
       hc_subtitle(text = plot_subtitle()) %>%
       hc_exporting(
         enabled = TRUE,
@@ -264,15 +310,15 @@ function(input, output, session) {
       ) %>%
       hc_legend(enabled = FALSE) %>%
       hc_xAxis(
-        title = list(text = "Gross Loss"),
+        title = list(text = "Ceded Loss"),
         plotLines = list(
           list(
             label = list(
-              text = paste0("mean = ", format(round(totes_mean, 0), big.mark = ","))
+              text = paste0("mean = ", format(round(ceded_mean, 0), big.mark = ","))
             ),
             color = "#FF0000",
             width = 2,
-            value = totes_mean,
+            value = ceded_mean,
             zIndex = 5
           ),
           list(
@@ -301,8 +347,9 @@ function(input, output, session) {
      net_specific <- cl_values(ob_total()$total_net_specific)
      net <- cl_values(ob_total()$total_net_agg)
      gross <- cl_values(ob_total()$total_gross)
+     ceded <- cl_values(ob_total()$total_ceded)
      
-     out <- data.frame(net_specific, net, gross)
+     out <- data.frame(net_specific, net, gross, ceded)
      
      cbind("Value At Risk" = c("mean", rownames(out)[-1]), out)
   })
@@ -315,12 +362,13 @@ function(input, output, session) {
        thead(
          tr(
            th(rowspan = 2, 'Confidence Level'),
-           th(colspan = 3, 'Losses')
+           th(colspan = 4, 'Losses')
          ),
          tr(
-           th('Net per Claim Limit'),
-           th('Net per Claim and Agg Limit'),
-           th('Gross of Excess Recoveries')
+           th('Net per Claim Only'),
+           th('Net Retained'),
+           th('Gross'),
+           th('Ceded')
          )
        )
      ))
@@ -341,7 +389,7 @@ function(input, output, session) {
        )
      ) %>% 
        formatCurrency(
-         columns = 2:4,
+         columns = 2:5,
          currency = "",
          digits = 0
        )
