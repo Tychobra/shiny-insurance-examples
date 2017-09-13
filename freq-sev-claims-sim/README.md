@@ -1,9 +1,14 @@
-mcmc-claims-sim
+Frequency Severity Claims Simulation
 ==================
 
 This Shiny application generates frequency/severity insurance claims simulations.  A frequency severity simulation is a very simple Markov Chain Monte Carlo (MCMC).
 
-[LIVE DEMO](https://tychobra.shinyapps.io/mcmc-claims-sim/).
+[LIVE APP](https://tychobra.shinyapps.io/freq-sev-claims-sim/).
+
+## Video
+
+[![Frequency Severity Simulation](https://res.cloudinary.com/dxqnb8xjb/image/upload/v1498564641/claims-fs-sim_fvmw15.png)](https://youtu.be/aiggRsQe8xE)
+
 
 ## Background
 
