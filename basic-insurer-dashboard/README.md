@@ -6,6 +6,6 @@ Basic Shiny application looking at an insurer's claims.  The inputs allow for da
 
 ### Video
 
-[![Basic Insurer Dashboard](https://res.cloudinary.com/dxqnb8xjb/image/upload/v1497444079/claims-dashboard_ynnol1.png)](https://youtu.be/d5nuTapHzfA)
+[![Basic Insurer Dashboard](https://res.cloudinary.com/dxqnb8xjb/image/upload/v1497444079/claims-dashboard_ynnol1.png)](https://youtu.be/YneLLtGcCus)
 
 Clone or download this repository to try it out on your own
