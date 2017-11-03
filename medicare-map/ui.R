@@ -24,28 +24,28 @@ fluidPage(
       windowTitle = "Medicare Spending"
     )
   ),
-  absolutePanel(
-    draggable = TRUE,
-    top = 150,
-    right = 10,
-    width = 250,
-    wellPanel(
-      fluidRow(
-        column(
-          width = 12,
-          class = "text-center",
-          h3(
-            textOutput("sel_state_name")
-          )
-        ),
-        column(
-          width = 12,
-          DT::dataTableOutput("state_locations"),
-          DT::dataTableOutput("state_meta_tbl")
-        )  
-      )
-    )
-  ),
+  # absolutePanel(
+  #   draggable = TRUE,
+  #   top = 150,
+  #   right = 10,
+  #   width = 250,
+  #   wellPanel(
+  #     fluidRow(
+  #       column(
+  #         width = 12,
+  #         class = "text-center",
+  #         h3(
+  #           textOutput("sel_state_name")
+  #         )
+  #       ),
+  #       column(
+  #         width = 12,
+  #         DT::dataTableOutput("state_locations"),
+  #         DT::dataTableOutput("state_meta_tbl")
+  #       )  
+  #     )
+  #   )
+  # ),
   fluidRow(
     column(
       width = 3,
@@ -74,12 +74,34 @@ fluidPage(
         )
       )
     ),
-    column(
-      width = 9,
+    div(
+      class = "col-sm-9 col-lg-7",
       highchartOutput(
         "states_map",
         height = 600
       )
+    ),
+    div(
+      class = "col-sm-offset-3 col-sm-9 col-lg-offset-0 col-lg-2",
+      wellPanel(
+        fluidRow(
+          column(
+            width = 12,
+              class = "text-center",
+              h3(
+                textOutput("sel_state_name")
+              )
+            ),
+            div(
+              class = "col-lg-12 col-sm-6",
+              DT::dataTableOutput("state_locations")
+            ),
+            div(
+              class = "col-lg-12 col-sm-6",
+              DT::dataTableOutput("state_meta_tbl")
+            )  
+          )
+       )
     )
   ),
   fluidRow(
