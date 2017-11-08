@@ -20,7 +20,7 @@ fluidPage(
         ),
         h1("Parallelogram Method", style = "display: inline"),
         a(
-          href = "https://github.com/Tychobra/shiny-insurance-examples",
+          href = "https://github.com/Tychobra/shiny-insurance-examples/tree/master/parallelogram-method",
           icon("github", class="fa-lg pull-right")
         )
       ), 
