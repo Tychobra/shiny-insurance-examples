@@ -1,20 +1,22 @@
 function(input, output, server) {
-  sims <- reactive({
+  cir_sims <- reactive({
+    set.seed(1234)
     obs <- input$num_obs
     yrs <- input$num_years
-    # theta parameters for `rsCIR()`
-    # theta[2] = mean
-    # theta[1] = mean / (reversion speed)
+    # theta parameters for `rcCIR()`
+    # theta[1] = mean * (reversion speed) = a * b
+    # theta[2] = mean = b
     # theta[3] = sigma
     out <- vector("list", length = obs)
     for (i in seq_along(out)) {
-      out[[i]] <- rsCIR(n=input$num_years, theta = c(input$ir_mean / input$reversion, input$ir_mean, input$ir_sd))
+      out[[i]] <- rcCIR(n=input$num_years, Dt = 1, x0 = 0, theta = c(input$ir_mean * input$reversion, input$reversion, input$ir_sd))
     }
     
     out
   })
   
   bs_sims <- reactive({
+    set.seed(1235)
     yields <- t_bills %>%
       mutate(
         year = year(date)
@@ -41,10 +43,10 @@ function(input, output, server) {
     out <- vector("list", length = obs)
     for (i in seq_along(out)) {
       # find initial yield
-      initial_yield <- sample(yields, size = 1, replace = TRUE)
-      sim_changes <- 1 + sample(yield_changes, size = input$num_years - 1, replace = TRUE)
+      initial_yield <- input$bs_yield
+      sim_changes <- 1 + sample(yield_changes, size = input$num_years, replace = TRUE)
       sim_changes <- cumprod(sim_changes)
-      out[[i]] <- c(initial_yield, initial_yield * sim_changes)
+      out[[i]] <- c(initial_yield * sim_changes)
     }
     
     out
@@ -53,7 +55,7 @@ function(input, output, server) {
   
   sel_sim <- reactive({
     dat <- if (input$type == "cir") {
-      sims()
+      cir_sims()
     } else {
       bs_sims()
     }
@@ -67,18 +69,44 @@ function(input, output, server) {
       out[[i]]$data <- dat[[i]]
       out[[i]]$name <- paste0("V", i)
     }
-    out
+    isolate({
+      title <- if (input$type == "cir") {
+        list(
+          main = "Cox-Ingersoll-Ross Random Walk",
+          sub = paste0("Parameters: a = ", input$reversion, ", b = ", input$ir_mean, 
+                       ", sigma = ", input$ir_sd) 
+        ) 
+      } else {
+          sel_duration <- gsub("[^*]_", "", input$duration)
+          
+        list(
+          main = paste0("Bootstrap Resampling - Changes in ", 
+                       sel_duration, 
+                       " Year Treasuries"), 
+          sub = paste0("Parameters: Initial Yield = ", input$bs_yield, 
+                       ", Sampled Annual Changes from ", 
+                       input$sample_years[1], 
+                       " to ",
+                       input$sample_years[2])
+        )
+      }
+    })
+    list(
+      dat = out,
+      titles = title
+    )
   })
   
   output$sims_chart <- renderHighchart({
-    dat <- sims_chart_prep()
-      
+    dat <- sims_chart_prep()$dat
+    titles <- sims_chart_prep()$titles  
     
     highchart() %>%
       hc_chart(
         zoomType = "y"
       ) %>%
-      #hc_title(text = paste0(hold$title," Sales Revenue")) %>%
+      hc_title(text = titles$main) %>%
+      hc_subtitle(text = titles$sub) %>%
       hc_exporting(
         enabled = TRUE,
         buttons = tychobratools::hc_btn_options()
@@ -91,7 +119,7 @@ function(input, output, server) {
         series = list(
           tooltip = list(
             crosshairs = TRUE,
-            pointFormat = 'Sales: <b>{point.y:,.2f}</b>'
+            pointFormat = 'Yield: <b>{point.y:,.2f}</b>'
           ),
           marker = list(enabled = FALSE)
         )
@@ -162,7 +190,6 @@ function(input, output, server) {
         zoomType = "y",
         type = "line"
       ) %>%
-      #hc_title(text = paste0(hold$title," Sales Revenue")) %>%
       hc_exporting(
         enabled = TRUE,
         buttons = tychobratools::hc_btn_options()
@@ -171,9 +198,6 @@ function(input, output, server) {
         enabled = TRUE,
         reversed = TRUE
         ) %>%
-      #hc_title(
-      #  text = "Historical Treasury Yields"
-      #) %>%
       hc_rangeSelector(
         selected = 4,
         buttons = list(

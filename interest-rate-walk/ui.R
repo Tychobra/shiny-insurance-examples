@@ -17,23 +17,16 @@ fluidPage(
           ), 
           href = "https://tychobra.com/shiny"
         ),
-        h1("Interest Rate Walk", style = "display: inline")#,
-        #a(
-        #  href = "https://github.com/Tychobra/shiny-insurance-examples/tree/master/interest-rate",
-        #  icon("github", class="fa-lg pull-right")
-        #)
+        h1("Interest Rate Walk", style = "display: inline"),
+        a(
+          href = "https://github.com/Tychobra/shiny-insurance-examples/tree/master/interest-rate-walk",
+          icon("github", class="fa-lg pull-right")
+        )
       ), 
       windowTitle = "Interest Rate"
     )
   ),
-  fluidRow(
-    column(
-      width = 12,
-      class = "text-center",
-      h1("Simulated Walk"),
-      br()
-    )
-  ),
+  br(),
   fluidRow(
     column(
       width = 3,
@@ -105,6 +98,12 @@ fluidPage(
           'input.type == "bootstrap"',
           h3("Bootstrap Resampling Using Treasury Yields"),
           br(),
+          numericInput(
+            inputId = "bs_yield",
+            label = "Initial Yield (yield at year 0)",
+            value = 4,
+            step = 0.1
+          ),
           selectInput(
             inputId = "duration",
             label = "Treasury Duration",

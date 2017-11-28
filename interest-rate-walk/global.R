@@ -1,4 +1,3 @@
-library(flexdashboard)
 library(shiny)
 library(tychobratools)
 library(highcharter)
@@ -8,7 +7,6 @@ library(sde)
 library(readr)
 library(xts)
 library(dplyr)
-library(tidyr)
 library(lubridate)
 
 # daily treasury bills
