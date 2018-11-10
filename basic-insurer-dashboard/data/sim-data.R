@@ -9,7 +9,7 @@ library(randomNames)
 n_claims <- 1000
 
 beg_date <- as.Date("2012-01-01")
-end_date <- as.Date("2017-06-21")
+end_date <- as.Date("2018-11-10")
 
 accident_range <- as.numeric(end_date - beg_date)
 
@@ -32,7 +32,7 @@ claims <- dplyr::data_frame(
   dplyr::mutate(report_date = accident_date + report_date,
                 # set payment to zero if closed when reported
                 payment = ifelse(status == 0, 0, payment),
-                case = payment * runif(n_claims, 0.25, 4.0),
+                case = payment * runif(n_claims, 0.25, 8.0),
                 transaction_date = report_date) %>%
   dplyr::arrange(accident_date)
 

@@ -3,6 +3,7 @@ tabItem(
   fluidRow(
     box(
       width = 9,
+      style = "overflow-x: auto;",
       div(
         style = "text-align: center;",
         h2("All Claims with Changes in Paid or Reported"),

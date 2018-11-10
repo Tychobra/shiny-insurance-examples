@@ -68,3 +68,25 @@ show_names <- function(nms) {
   nms_tbl$display_name
 }
 
+hc_btn_options <- list(
+  contextButton = list(
+    menuItems = list(
+      list(
+        text = "Export to PDF",
+        onclick = JS(
+          "function () { this.exportChart({
+             type: 'application/pdf'
+           }); }"
+        )
+      ),
+      list(
+        text = "Export to SVG",
+        onclick = JS(
+          "function () { this.exportChart({
+             type: 'image/svg+xml'
+          }); }"
+        )
+      )
+    )
+  )
+)

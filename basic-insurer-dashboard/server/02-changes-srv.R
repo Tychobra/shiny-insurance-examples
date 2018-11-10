@@ -73,7 +73,7 @@ output$changes_tbl <- DT::renderDataTable({
     extensions = "Buttons",
     options = list(
       dom = 'Brtip',
-      scrollX = TRUE,
+      #scrollX = TRUE,
       buttons = list( 
         list(
           extend = 'collection',

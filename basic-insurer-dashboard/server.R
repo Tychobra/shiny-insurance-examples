@@ -1,26 +1,5 @@
 
-hc_btn_options <- list(
-  contextButton = list(
-    menuItems = list(
-      list(
-        text = "Export to PDF",
-        onclick = JS(
-          "function () { this.exportChart({
-             type: 'application/pdf'
-           }); }"
-        )
-      ),
-      list(
-        text = "Export to SVG",
-        onclick = JS(
-          "function () { this.exportChart({
-             type: 'image/svg+xml'
-          }); }"
-        )
-      )
-    )
-  )
-)
+
 
 #' loss_run
 #' 
@@ -40,9 +19,6 @@ loss_run <- function(val_date) {
 
 function(input, output) {
   
-  output$debuggin <- renderPrint({
-    input$val_date
-  })
   
   val_tbl <- reactive({
     req(input$val_date)

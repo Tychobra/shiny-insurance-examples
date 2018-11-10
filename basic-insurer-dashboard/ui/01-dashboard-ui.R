@@ -11,7 +11,10 @@ tabItem(
       fluidRow(
         box(
           width = 12,
-          highchartOutput("ay_plot")
+          highchartOutput(
+            "ay_plot",
+            height = 500
+          )
         )#,
         #verbatimTextOutput("debuggin")
       )
