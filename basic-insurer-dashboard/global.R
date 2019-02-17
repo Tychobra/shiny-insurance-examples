@@ -7,6 +7,7 @@ library(DT)
 library(lubridate)
 library(tidyr)
 library(shinyWidgets)
+library(tychobratools)
 
 trans <- readRDS("./data/trans.RDS")
 
@@ -23,18 +24,28 @@ hcoptslang <- getOption("highcharter.lang")
 hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
 
-valueBox2 <- function (value, subtitle, icon = NULL, color = "#7cb5ec", width = 4, 
-                       href = NULL) 
+valueBox2 <- function (value, subtitle, icon = NULL, backgroundColor = "#7cb5ec", textColor = "#FFF", width = 4, href = NULL)
 {
-  if (!is.null(icon)) 
-    #tagAssert(icon, type = "i")
-  boxContent <- div(class = "small-box", style = paste0("background-color: ", color, ";"), 
-                    div(class = "inner", h3(value), p(subtitle)), if (!is.null(icon)) 
-                      div(class = "icon-large", icon))
-  if (!is.null(href)) 
+  
+  boxContent <- div(
+    class = paste0("small-box"),
+    style = paste0("background-color: ", backgroundColor, "; color: ", textColor, ";"),
+    div(
+      class = "inner",
+      h3(value),
+      p(subtitle)
+    ),
+    if (!is.null(icon)) {
+      div(class = "icon-large", icon)
+    }
+  )
+  if (!is.null(href)) {
     boxContent <- a(href = href, boxContent)
-  div(class = if (!is.null(width)) 
-    paste0("col-sm-", width), boxContent)
+  }
+  div(
+    class = if (!is.null(width)) paste0("col-sm-", width),
+    boxContent
+  )
 }
 
 display_names <- tribble(
@@ -68,25 +79,3 @@ show_names <- function(nms) {
   nms_tbl$display_name
 }
 
-hc_btn_options <- list(
-  contextButton = list(
-    menuItems = list(
-      list(
-        text = "Export to PDF",
-        onclick = JS(
-          "function () { this.exportChart({
-             type: 'application/pdf'
-           }); }"
-        )
-      ),
-      list(
-        text = "Export to SVG",
-        onclick = JS(
-          "function () { this.exportChart({
-             type: 'image/svg+xml'
-          }); }"
-        )
-      )
-    )
-  )
-)

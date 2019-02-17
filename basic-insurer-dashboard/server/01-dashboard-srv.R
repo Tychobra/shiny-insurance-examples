@@ -86,28 +86,31 @@ dash_metric_boxes <- reactive({
 
 output$paid_box <- renderValueBox({
   out <- dash_metric_boxes()
-  valueBox(
+  valueBox2(
     format(round(out$dat$paid, 0), big.mark = ","),
     subtitle = out$titles[1],
-    icon = icon("money")
+    icon = icon("money"),
+    backgroundColor = "#434348"
   )
 })
 
 output$case_box <- renderValueBox({
   out <- dash_metric_boxes()
-  valueBox(
+  valueBox2(
     format(round(out$dat$case, 0), big.mark = ","),
     subtitle = out$titles[2],
-    icon = icon("university")
+    icon = icon("university"),
+    backgroundColor = "#7cb5ec"
   )
 })
 
 output$reported_box <- renderValueBox({
   out <- dash_metric_boxes()
-  valueBox(
+  valueBox2(
     format(round(out$dat$reported, 0), big.mark = ","),
     subtitle = out$titles[3],
-    icon = icon("clipboard")
+    icon = icon("clipboard"),
+    backgroundColor = "#f7a35c"
   )
 })
 
@@ -128,7 +131,7 @@ ay_plot_prep <- reactive({
     "total" = list(
       "title" = paste0("Reported Loss & ALAE as of ", val_date),
       "subtitle" = subtitle,
-      "series" = c("Total Paid", "Total Case Reserve"),
+      "series" = c("Paid", "Case Reserve"),
       "y_axis" = "Loss & ALAE"
     ),
     "severity" = list(
@@ -159,7 +162,7 @@ output$ay_plot <- renderHighchart({
     hc_chart(type = "column") %>%
     hc_exporting(
       enabled = TRUE,
-      buttons = hc_btn_options
+      buttons = tychobratools::hc_btn_options()
     ) %>%
     hc_legend(
       reversed = TRUE
@@ -171,7 +174,16 @@ output$ay_plot <- renderHighchart({
       title = list(text = "Accident Year")
     ) %>%
     hc_yAxis(
-      title = list(text = titles$y_axis)
+      title = list(text = titles$y_axis),
+      stackLabels = list(
+        enabled = TRUE,
+        style = list(
+          fontWeight = "bold",
+          color = "#f7a35c",
+          textOutline = NULL
+        ),
+        format = "{total:,.0f}"
+      )
     ) %>%
     hc_plotOptions(
       column = list(stacking = 'normal')

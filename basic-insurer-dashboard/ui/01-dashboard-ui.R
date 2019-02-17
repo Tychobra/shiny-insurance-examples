@@ -22,13 +22,16 @@ tabItem(
     box(
       width = 3,
       title = "Loss Metric",
-      radioButtons(
-        "dash_metric",
-        label = NULL,
-        choices = c("Total" = "total", 
-                    "Severity" = "severity",
-                    "Claims" = "claims"),
-        inline = TRUE
+      div(
+        class = "text-center",
+        radioButtons(
+          "dash_metric",
+          label = NULL,
+          choices = c("Total" = "total", 
+                      "Severity" = "severity",
+                      "Claims" = "claims"),
+          inline = TRUE
+        )
       )
     ),
     box(
@@ -36,12 +39,16 @@ tabItem(
       title = "Data Filters",
       conditionalPanel(
         "input.dash_metric !== 'claims'",
-        checkboxGroupInput(
-          "dash_status",
-          "Status",
-          choices = c("Open", "Closed"),
-          selected = c("Open", "Closed"),
-          inline = TRUE
+        div(
+          class = "text-center",
+          checkboxGroupInput(
+            "dash_status",
+            "Status",
+            choices = c("Open", "Closed"),
+            selected = c("Open", "Closed"),
+            inline = TRUE
+          ),
+          br()
         )
       ),
       numericInput(
@@ -49,6 +56,7 @@ tabItem(
         "Exclude claims if Reported below:",
         value = 0
       ),
+      br(),
       shinyWidgets::pickerInput(
         inputId = "dash_state", 
         label = "State", 
@@ -56,7 +64,8 @@ tabItem(
         options = list(`actions-box` = TRUE), 
         multiple = TRUE,
         selected = state_choices
-      )
+      ),
+      br()
     )
   )
 )
