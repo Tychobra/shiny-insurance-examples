@@ -28,38 +28,6 @@ function(input, output) {
   
   source("server/01-dashboard-srv.R", local = TRUE)
   source("server/02-changes-srv.R", local = TRUE)
-  
-  ### table tab
-  output$trans_tbl <- DT::renderDataTable({
-    out <- val_tbl() %>%
-             dplyr::mutate(status = as.factor(status),
-                           state = as.factor(state)) %>%
-             dplyr::select(-payment, -transaction_date, -trans_num)
-    
-    datatable(
-      out,
-      rownames = FALSE,
-      colnames = show_names(names(out)),
-      extensions = "Buttons",
-      filter = 'top',
-      options = list(
-        dom = 'Bfrtip',
-        scrollX = TRUE,
-        buttons = list(
-          'colvis', 
-          list(
-            extend = 'collection',
-            buttons = c('csv', 'excel', 'pdf'),
-            text = 'Download'
-          )
-        )
-      )
-    ) %>%
-      formatCurrency(
-        columns = 7:9,
-        currency = "",
-        digits = 0
-      )
-  }, server = FALSE)
+  source("server/03-claims-srv.R", local = TRUE)
 
 }

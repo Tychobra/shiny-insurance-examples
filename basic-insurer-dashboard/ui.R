@@ -33,15 +33,7 @@ body <- dashboardBody(
   tabItems(
     source("ui/01-dashboard-ui.R", local = TRUE)$value,
     source("ui/02-changes-ui.R", local = TRUE)$value,
-    tabItem(
-      tabName = "table",
-      fluidRow(
-        box(
-          width = 12,
-          DT::dataTableOutput("trans_tbl")
-        )
-      )
-    )
+    source("ui/03-claims-ui.R", local = TRUE)$value
   )
 )
 
