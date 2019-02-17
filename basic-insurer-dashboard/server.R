@@ -12,6 +12,7 @@ loss_run <- function(val_date) {
     filter(transaction_date <= val_date) %>%
     group_by(claim_num) %>%
     top_n(1, wt = trans_num) %>%
+    ungroup() %>%
     mutate(reported = paid + case) %>%
     arrange(desc(transaction_date))
 }
