@@ -9,7 +9,7 @@ library(randomNames)
 n_claims <- 1000
 
 beg_date <- as.Date("2012-01-01")
-end_date <- as.Date("2018-11-10")
+end_date <- Sys.Date()#as.Date("2019-02-17")
 
 accident_range <- as.numeric(end_date - beg_date)
 
