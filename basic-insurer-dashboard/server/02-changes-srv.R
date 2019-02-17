@@ -48,19 +48,19 @@ output$changes_tbl <- DT::renderDataTable({
     table(
      thead(
       tr(
-         th(rowspan = 2, "Claim Number"),
-           th(rowspan = 2, "Accident Date"),
-           th(colspan = 2, t1),
-           th(colspan = 2, t2),
-           th(colspan = 2, t3)
+         th(rowspan = 2, "Claim Number", class = "dt-border-left dt-border-right dt-border-top"),
+           th(rowspan = 2, "Accident Date", class = "dt-border-right dt-border-top"),
+           th(colspan = 2, t1, class = "dt-border-right dt-border-top"),
+           th(colspan = 2, t2, class = "dt-border-right dt-border-top"),
+           th(colspan = 2, t3, class = "dt-border-right dt-border-top")
          ),
          tr(
            th("Paid"),
-           th("Reported"),
+           th("Reported", class = "dt-border-right"),
            th("Paid"),
-           th("Reported"),
+           th("Reported", class = "dt-border-right"),
            th("Paid"),
-           th("Reported")
+           th("Reported", class = "dt-border-right")
          )
        )
      )
@@ -70,6 +70,7 @@ output$changes_tbl <- DT::renderDataTable({
     out,
     rownames = FALSE,
     container = col_headers,
+    class = "stripe cell-border",
     extensions = "Buttons",
     options = list(
       dom = 'Brtip',
