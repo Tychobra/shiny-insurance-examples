@@ -22,6 +22,11 @@ sidebar <- dashboardSidebar(
 
 body <- dashboardBody(
   tags$head(
+    tags$link( 
+      rel = "shortcut icon", 
+      type = "image/png", 
+      href = "https://res.cloudinary.com/dxqnb8xjb/image/upload/v1510505618/tychobra-logo-blue_d2k9vt.png"
+    ),
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
     tags$script(src = "custom.js")
   ),
