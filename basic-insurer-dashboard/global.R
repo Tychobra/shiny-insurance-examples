@@ -48,6 +48,19 @@ valueBox2 <- function (value, subtitle, icon = NULL, backgroundColor = "#7cb5ec"
   )
 }
 
+downloadButton2 <- function (outputId, label = "Download", class = NULL, icon = icon("download"), ...) {
+  tags$a(
+    id = outputId, 
+    class = paste("btn btn-default shiny-download-link", class), 
+    href = "", 
+    target = "_blank", 
+    download = NA, 
+    icon, 
+    label, 
+    ...
+  )
+}
+
 display_names <- tribble(
   ~data_name, ~display_name,
   "claim_num", "Claim Number",
