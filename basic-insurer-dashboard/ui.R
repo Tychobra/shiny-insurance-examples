@@ -16,7 +16,8 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
     menuItem("Claim Changes", tabName = "changes", icon = icon("balance-scale")),
-    menuItem("Claims Table", tabName = "table", icon = icon("table"))
+    menuItem("Claims Table", tabName = "table", icon = icon("table")),
+    menuItem("Reports", tabName = "report", icon = icon("file-pdf-o"))
   )
 )
 
@@ -33,7 +34,8 @@ body <- dashboardBody(
   tabItems(
     source("ui/01-dashboard-ui.R", local = TRUE)$value,
     source("ui/02-changes-ui.R", local = TRUE)$value,
-    source("ui/03-claims-ui.R", local = TRUE)$value
+    source("ui/03-claims-ui.R", local = TRUE)$value,
+    source("ui/04-report-ui.R", local = TRUE)$value
   )
 )
 

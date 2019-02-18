@@ -14,7 +14,7 @@ trans <- readRDS("./data/trans.RDS")
 state_choices <- unique(trans$state)
 ay_choices <- trans %>%
                 mutate(year = year(accident_date)) %>%
-                .[["year"]] %>%
+                pull("year") %>%
                 unique() %>%
                 sort()
 
@@ -79,3 +79,18 @@ show_names <- function(nms) {
   nms_tbl$display_name
 }
 
+#' loss_run
+#' 
+#' view losses as of a specific date
+#' 
+#' @param val_date
+#' 
+loss_run <- function(val_date) {
+  trans %>%
+    filter(transaction_date <= val_date) %>%
+    group_by(claim_num) %>%
+    top_n(1, wt = trans_num) %>%
+    ungroup() %>%
+    mutate(reported = paid + case) %>%
+    arrange(desc(transaction_date))
+}
