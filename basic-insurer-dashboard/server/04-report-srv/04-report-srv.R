@@ -13,7 +13,7 @@ output$generate_pdf_report <- downloadHandler(
     
     # Set up parameters to pass to Rmd document
     params_ <- list(
-      data = val_tbl(), 
+      data = trans, 
       val_date = ymd(input$val_date)
     )
     

@@ -198,7 +198,7 @@ knitr::kable(
 \vspace{1cm}
 
 ```{r table_2, results = 'asis'}
-if (is_in_shiny == TRUE) incProgress(amount = .05, message = "Generating Table 1")
+if (is_in_shiny == TRUE) incProgress(amount = .05, message = "Generating Table 2")
 
 out <- lr_current %>%
   select(claim_num, accident_date, claimant, state, status, paid, reported)
@@ -229,7 +229,7 @@ knitr::kable(
   format = "latex",
   booktabs = TRUE,
   linesep = "",
-  longtable = TRUE,
+  #longtable = TRUE,
   align = c(
     "c",
     "c",
