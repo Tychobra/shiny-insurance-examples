@@ -3,14 +3,6 @@ geometry: "left=1cm,right=1cm,top=2cm,bottom=2cm"
 params:
   data: !r NA
   val_date: !r as.Date("2019-01-31")
-header-includes:
-  - \usepackage{booktabs}
-  - \usepackage{longtable}
-  - \usepackage{array}
-  - \usepackage{multirow}
-  - \usepackage{float}
-  - \usepackage{makecell}
-  - \usepackage{caption}
 output: 
   pdf_document: 
     keep_tex: yes
@@ -20,23 +12,24 @@ output:
 classoption: landscape
 ---
 
-```{r options, include = FALSE, eval = TRUE}
+```{r options, message = FALSE, warning = FALSE, echo = FALSE}
 # determine if running in Shiny or not
 is_in_shiny <- if(is.null(shiny::getDefaultReactiveDomain())) FALSE else TRUE
-if (is_in_shiny == TRUE) shiny::incProgress(amount = .05, message = "Setting Up")
+if (is_in_shiny == TRUE) shiny::incProgress(amount = 0, message = "Setting Up")
 
 # packages
 library(dplyr)
-library(stringr)
 library(lubridate)
 library(knitr)
 library(kableExtra)
-library(summaryrow)
+library(summaryrow) # remotes::install_github("merlinoa/summaryrow")
 
 # knitr options
 knitr::opts_chunk$set(
   echo = FALSE
 )
+
+options(knitr.table.format = "latex")
 
 ```
 
@@ -92,7 +85,7 @@ date_now <- as.character(format(Sys.Date(), format = "%B %d, %Y"))
 
 
 ```{r data_prep, eval = TRUE}
-if (is_in_shiny) shiny::incProgress(amount = .05, message = "Loading Data")
+if (is_in_shiny) shiny::incProgress(amount = 0.25, message = "Loading Data")
 
 # parameters
 data_ <- if (length(params$data) == 1) readRDS("../../data/trans.RDS") else params$data
@@ -129,7 +122,7 @@ lr_prior <- loss_run(eval_ - years(1))
 \vspace{1cm}
 
 ```{r table_1, results = 'asis'}
-if (is_in_shiny == TRUE) incProgress(amount = .05, message = "Generating Table 1")
+if (is_in_shiny == TRUE) incProgress(amount = 0.25, message = "Generating Table 1")
 
 by_ay <- lr_current %>%
   mutate(
@@ -153,7 +146,6 @@ by_ay <- lr_current %>%
 
 knitr::kable(
   by_ay,
-  format = "latex",
   booktabs = TRUE,
   linesep = "",
   align = c(
@@ -172,7 +164,7 @@ knitr::kable(
     "Open",
     "Reported"
   ),
-  #escape = FALSE,
+  escape = FALSE,
   digits = 0,
   format.args = list(big.mark = ",")
 ) %>%
@@ -183,8 +175,8 @@ knitr::kable(
     "Loss & ALAE" = 3,
     "Number of Claims" = 2
   )) %>%
-  kable_styling(full_width = TRUE, latex_options = c("striped", "scale_down")) %>%
-  column_spec(1, border_right = TRUE) 
+  #column_spec(1, border_right = TRUE) %>%
+  kable_styling(full_width = TRUE, latex_options = c("striped"))
 ```
 
 
@@ -193,12 +185,11 @@ knitr::kable(
 ### Claims with change in paid >= 100,000
 ### Evaluated as of `r as.character(format(eval_, format = "%B %d, %Y"))`
 
-\renewcommand{\arraystretch}{2}
 
 \vspace{1cm}
 
 ```{r table_2, results = 'asis'}
-if (is_in_shiny == TRUE) incProgress(amount = .05, message = "Generating Table 2")
+if (is_in_shiny == TRUE) incProgress(amount = 0.25, message = "Generating Table 2")
 
 out <- lr_current %>%
   select(claim_num, accident_date, claimant, state, status, paid, reported)
@@ -226,9 +217,9 @@ names(headers) <- c(
 
 knitr::kable(
   out,
-  format = "latex",
   booktabs = TRUE,
   linesep = "",
+  escape = FALSE,
   #longtable = TRUE,
   align = c(
     "c",
@@ -260,7 +251,8 @@ knitr::kable(
   format.args = list(big.mark = ",")
 ) %>%
   row_spec(0, align = "c") %>%
-  add_header_above(headers) %>%
-  kable_styling(full_width = TRUE, latex_options = c("striped", "repeat_header")) %>%
-  column_spec(c(6, 8, 10), border_left = TRUE) 
+  column_spec(c(3), width = "4cm") %>%
+  #column_spec(c(6, 8, 10), border_left = TRUE)  %>%
+  kable_styling(full_width = FALSE, position = "center", latex_options = c("striped", "repeat_header")) %>%
+  add_header_above(headers)
 ```
