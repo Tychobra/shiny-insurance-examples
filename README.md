@@ -2,7 +2,7 @@
 
 Examples of Shiny applications for insurance analytics
 
-Each directory contains a Shiny app.  Open up each directory to view the code for each app.  When possible, we provide all code and data so the app can be run on your local machine.  The following table outlines which apps can be run locally. Some apps have videos and/or blog posts.  
+Each directory contains a Shiny app.  When possible, we provide all code and data so the app can run on your local machine.  The following table outlines which apps you can run locally. Some apps have videos and/or blog posts.  
 
 | App Name                        | Runs Locally | Live Version | Video |     Blog Post |
 |---------------------------------|-----|--------------|-----------| --------|
