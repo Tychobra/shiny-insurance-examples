@@ -8,6 +8,9 @@ library(tidyr)
 library(DT)
 library(rintrojs)
 library(tychobratools)
+library(shinycssloaders)
+
+options(spinner.type = 8)
 
 ### highcharter options
 hcoptslang <- getOption("highcharter.lang")

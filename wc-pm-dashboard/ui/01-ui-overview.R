@@ -20,15 +20,17 @@ tabItem(
           width = 12,
           conditionalPanel(
             condition = "input.metric == 'status'",
-            highchartOutput("open_per_sim_plot")
+            highchartOutput("open_per_sim_plot") %>% withSpinner()
           ),
           conditionalPanel(
             condition = "input.metric == 'payment'",
-            highchartOutput("payment_per_sim_plot")
+            highchartOutput("payment_per_sim_plot") %>% withSpinner()
           ),
           column(
             width = 12,
             id = "tour_7",
+            class = "text-center",
+            br(),
             sliderInput(
               "overview_interval",
               "Confidence Interval",
@@ -50,13 +52,16 @@ tabItem(
         box(
           title = "Metric",
           width = 12,
-          radioButtons(
-            inputId = "metric",
-            label = NULL,
-            choices = c("Payments" = "payment",
-                        "Status" = "status"),
-            selected = "payment",
-            inline = TRUE
+          div(
+            class = "text-center",
+            radioButtons(
+              inputId = "metric",
+              label = NULL,
+              choices = c("Payments" = "payment",
+                          "Status" = "status"),
+              selected = "payment",
+              inline = TRUE
+            )
           )
         )
       ),
@@ -74,13 +79,16 @@ tabItem(
             selected = ay_choices
           ),
           br(),
-          checkboxGroupInput(
-            inputId = "overview_type", 
-            label = "Claim Type", 
-            choices = c("Medical Only" = "M",
-                        "Lost Time" = "C"), 
-            selected = c("M", "C"),
-            inline = TRUE
+          div(
+            class = "text-center",
+            checkboxGroupInput(
+              inputId = "overview_type", 
+              label = "Claim Type", 
+              choices = c("Medical Only" = "M",
+                          "Lost Time" = "C"), 
+              selected = c("M", "C"),
+              inline = TRUE
+            )
           )
         )
       )

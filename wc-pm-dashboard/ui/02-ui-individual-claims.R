@@ -4,14 +4,9 @@ tabItem(
     column(
       width = 9,
       fluidRow(
-        box(
-          width = 12,
-          title = "Summary Stats",
-          collapsible = TRUE,
-          valueBoxOutput("ind_claim_cts"),
-          valueBoxOutput("ind_severity"),
-          valueBoxOutput("ind_severity_sd")
-        )
+        valueBoxOutput("ind_claim_cts"),
+        valueBoxOutput("ind_severity"),
+        valueBoxOutput("ind_severity_sd")
       ),
       fluidRow(
         box(
@@ -19,8 +14,8 @@ tabItem(
           width = 12,
           highchartOutput(
             "indiv_claims_plot",
-            height = '450px'
-          ) 
+            height = '550px'
+          ) %>% withSpinner()
         )
       )
     ),
@@ -30,6 +25,7 @@ tabItem(
         box(
           title = "Plot Groups",
           width = 12,
+          class = "text-center",
           radioButtons(
             inputId = "ind_plot_groups",
             label = NULL,
@@ -44,25 +40,31 @@ tabItem(
           width = 12,
           conditionalPanel(
             condition = "input.ind_plot_groups == 'type'",
-            checkboxGroupInput(
-              inputId = "ind_status", 
-              label = "Claim Status", 
-              choices = c("Open" = "O",
-                          "Closed" = "C"), 
-              selected = c("O", "C"),
-              inline = TRUE              
-            ) 
+            div(
+              class = "text-center",
+              checkboxGroupInput(
+                inputId = "ind_status", 
+                label = "Claim Status", 
+                choices = c("Open" = "O",
+                            "Closed" = "C"), 
+                selected = c("O", "C"),
+                inline = TRUE              
+              ) 
+            )
           ),
           conditionalPanel(
             condition = "input.ind_plot_groups == 'status'",
-            checkboxGroupInput(
-              inputId = "ind_type", 
-              label = "Claim Type", 
-              choices = c("Medical Only" = "M",
-                          "Lost Time" = "C"), 
-              selected = c("M", "C"),
-              inline = TRUE
-            ) 
+            div(
+              class = "text-center",
+              checkboxGroupInput(
+                inputId = "ind_type", 
+                label = "Claim Type", 
+                choices = c("Medical Only" = "M",
+                            "Lost Time" = "C"), 
+                selected = c("M", "C"),
+                inline = TRUE
+              )
+            )
           ),
           br(),
           numericInput(
@@ -81,13 +83,16 @@ tabItem(
             selected = nature_choices
           ),
           br(),
-          checkboxGroupInput(
-            inputId = "ind_gender", 
-            label = "Gender", 
-            choices = c("Male" = "M",
-                        "Female" = "F"), 
-            selected = c("M", "F"),
-            inline = TRUE
+          div(
+            class = "text-center",
+            checkboxGroupInput(
+              inputId = "ind_gender", 
+              label = "Gender", 
+              choices = c("Male" = "M",
+                          "Female" = "F"), 
+              selected = c("M", "F"),
+              inline = TRUE
+            )
           )
         ) 
       )
@@ -104,8 +109,8 @@ tabItem(
             width = 12,
             highchartOutput(
               "indiv_claim_sim",
-              height = '450px'
-            ),
+              height = '550px'
+            ) %>% withSpinner(),
             column(
               width = 12,
               sliderInput(
@@ -126,7 +131,7 @@ tabItem(
           box(
             id = "tour_2_3",
             width = 12,
-            DT::dataTableOutput("clm_char_tbl")#,
+            DT::dataTableOutput("clm_char_tbl") %>% withSpinner()#,
             #verbatimTextOutput("debuggin")
           )
         )
