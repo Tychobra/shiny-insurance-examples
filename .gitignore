@@ -6,3 +6,5 @@
 *.Rproj
 .DS_Store
 rsconnect/
+*.pdf
+*.tex
