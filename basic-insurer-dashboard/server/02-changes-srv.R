@@ -36,35 +36,42 @@ output$changes_title <- renderText({
   )
 })
 
-output$changes_tbl <- DT::renderDataTable({
-  out <- changes_prep() 
-  
+
+changes_tbl_headers <- reactive({
   # for some reason I can't include these in the tags
   t1 <- paste0("As of ", input$val_date)
   t2 <- paste0("As of ", input$val_date_prior)
   t3 <- paste0("Change from ", input$val_date_prior, 
                " to ", input$val_date)
-  col_headers <- htmltools::withTags(
+  
+  htmltools::withTags(
     table(
-     thead(
-      tr(
-         th(rowspan = 2, "Claim Number", class = "dt-border-left dt-border-right dt-border-top"),
-           th(rowspan = 2, "Accident Date", class = "dt-border-right dt-border-top"),
-           th(colspan = 2, t1, class = "dt-border-right dt-border-top"),
-           th(colspan = 2, t2, class = "dt-border-right dt-border-top"),
-           th(colspan = 2, t3, class = "dt-border-right dt-border-top")
-         ),
-         tr(
-           th("Paid"),
-           th("Reported", class = "dt-border-right"),
-           th("Paid"),
-           th("Reported", class = "dt-border-right"),
-           th("Paid"),
-           th("Reported", class = "dt-border-right")
-         )
-       )
-     )
-   )
+      thead(
+        tr(
+          th(rowspan = 2, "Claim Number", class = "dt-border-left dt-border-right dt-border-top"),
+          th(rowspan = 2, "Accident Date", class = "dt-border-right dt-border-top"),
+          th(colspan = 2, t1, class = "dt-border-right dt-border-top"),
+          th(colspan = 2, t2, class = "dt-border-right dt-border-top"),
+          th(colspan = 2, t3, class = "dt-border-right dt-border-top")
+        ),
+        tr(
+          th("Paid"),
+          th("Reported", class = "dt-border-right"),
+          th("Paid"),
+          th("Reported", class = "dt-border-right"),
+          th("Paid"),
+          th("Reported", class = "dt-border-right")
+        )
+      )
+    )
+  )
+})
+
+
+output$changes_tbl <- DT::renderDT({
+  out <- changes_prep() 
+  col_headers <- changes_tbl_headers()
+  
   
   datatable(
     out,
@@ -74,7 +81,7 @@ output$changes_tbl <- DT::renderDataTable({
     extensions = "Buttons",
     options = list(
       dom = 'Brtip',
-      #scrollX = TRUE,
+      scrollX = TRUE,
       buttons = list( 
         list(
           extend = 'collection',
@@ -90,3 +97,5 @@ output$changes_tbl <- DT::renderDataTable({
       digits = 0
     )
 }, server = FALSE)
+
+outputOptions(output, "changes_tbl", suspendWhenHidden = FALSE)

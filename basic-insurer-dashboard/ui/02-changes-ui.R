@@ -3,13 +3,12 @@ tabItem(
   fluidRow(
     box(
       width = 9,
-      style = "overflow-x: auto;",
       div(
         style = "text-align: center;",
         h2("All Claims with Changes in Paid or Reported"),
         h3(textOutput("changes_title"))
       ),
-      dataTableOutput("changes_tbl")
+      DTOutput("changes_tbl")
     ),
     box(
       width = 3,

@@ -3,7 +3,7 @@ tabItem(
   fluidRow(
     box(
       width = 12,
-      DT::dataTableOutput("trans_tbl")
+      DT::DTOutput("trans_tbl")
     )
   )
 )

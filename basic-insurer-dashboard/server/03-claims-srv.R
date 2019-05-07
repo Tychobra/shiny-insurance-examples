@@ -1,5 +1,5 @@
 ### table tab
-output$trans_tbl <- DT::renderDataTable({
+output$trans_tbl <- DT::renderDT({
   out <- val_tbl() %>%
     dplyr::mutate(status = as.factor(status),
                   state = as.factor(state)) %>%
