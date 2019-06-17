@@ -35,19 +35,12 @@ observeEvent(input$generate_report_modal, {
   )
 })
 
-modal_val <- reactiveVal(0)
-
-observeEvent(modal_val(), {
-  removeModal()
-})
-
 output$generate_excel_report <- downloadHandler(
   filename = function(){
     paste0("claims-report-as-of-", input$val_date, ".xlsx")
   },
   content = function(file) {
-    #hack to close modal
-    modal_val(modal_val() + 1)
+    removeModal()
     
     ##
     #data prep
@@ -92,7 +85,7 @@ output$generate_excel_report <- downloadHandler(
         n = n()
       ) %>%
       ungroup() %>%
-      totals_row(
+      summaryrow::totals_row(
         cols = 2:6,
         label_col = 1
       )
