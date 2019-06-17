@@ -18,14 +18,16 @@ sidebar <- dashboardSidebar(
     menuItem("Claim Changes", tabName = "changes", icon = icon("balance-scale")),
     menuItem("Claims Table", tabName = "table", icon = icon("table")),
     br(),
-    column(
-      12,
-      downloadButton2(
-        "generate_pdf_report",
-        "Create PDF Report",
-        icon = icon("file-pdf-o"),
-        #class = "btn-lg",
-        style = "width: 100%; color: #111"
+    fluidRow(
+      column(
+        width = 11,
+        actionButton(
+          "generate_report_modal",
+          "Create Report",
+          icon = icon("download"),
+          #class = "btn-lg",
+          style = "width: 95%; color: #111"
+        )
       )
     )
     #menuItem("Reports", tabName = "report", icon = icon("file-pdf-o"))
