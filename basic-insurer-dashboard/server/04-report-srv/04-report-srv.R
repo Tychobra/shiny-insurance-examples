@@ -4,6 +4,9 @@ output$generate_pdf_report <- downloadHandler(
     paste0("claims-report-as-of-", input$val_date, ".pdf")
   },
   content = function(file) {
+    #hack to close modal
+    modal_val(modal_val() + 1)
+    
     # Copy the report file to a temporary directory before processing it, in
     # case we don't have write permissions to the current working dir (which
     # can happen when deployed).
