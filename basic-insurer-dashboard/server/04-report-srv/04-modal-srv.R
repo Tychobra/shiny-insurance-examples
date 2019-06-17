@@ -49,8 +49,14 @@ output$generate_excel_report <- downloadHandler(
     #hack to close modal
     modal_val(modal_val() + 1)
     
+    ##
     #data prep
+    ##
+    
+    #
     #table 1
+    #
+    
     params <- list(
       data = trans, 
       val_date = ymd(input$val_date)
@@ -93,7 +99,9 @@ output$generate_excel_report <- downloadHandler(
     
     names(table1) <- c("Accident Year", "Paid", "Case", "Reported", "Open", "Reported")
     
+    #
     #table 2
+    #
     
     out <- lr_current %>%
       select(claim_num, accident_date, claimant, state, status, paid, reported)
@@ -114,11 +122,17 @@ output$generate_excel_report <- downloadHandler(
     names(table2) <- c("Claim Number", "Account Date", "Claimant", "State", "Status", "Paid",
                        "Reported", "Paid", "Paid", "Reported")
     
+    ##
     #Workbook
+    ##
+    
     to_download <- createWorkbook()
     
     addWorksheet(wb = to_download, sheetName = "Exhibit 1")
     addWorksheet(wb = to_download, sheetName = "Exhibit 2")
+    
+    
+    #Set table widths
     
     setColWidths(
       to_download,
@@ -133,6 +147,8 @@ output$generate_excel_report <- downloadHandler(
       cols = 1:11,
       widths = c(13, 12, 18, 6, 7, 9, 9, 9, 9, 9, 9)
     )
+    
+    #Merge top rows to be the width of the first 6 (sheet 1) or 5 (sheet 2) columns
     
     lapply(1:10, function(x) {
     mergeCells(
@@ -149,6 +165,9 @@ output$generate_excel_report <- downloadHandler(
         cols = 1:5,
         rows = x
       )})
+    
+    #Tychobra logo, height of first 6 rows and width of first 6 columns (sheet 1)
+    #or first 5 columns (sheet 2)
     
     insertImage(
       to_download,
@@ -173,6 +192,8 @@ output$generate_excel_report <- downloadHandler(
       dpi = 300
     )
     
+    #4 lines of text on each sheet
+    
     writeData(
       to_download,
       1,
@@ -269,6 +290,7 @@ output$generate_excel_report <- downloadHandler(
       style = createStyle(fontSize = 18, textDecoration = "Bold", fontName = "Bahnschrift Light Condensed")
     )
     
+    #Tables and formatting
     
     writeData(
       to_download,
@@ -301,6 +323,24 @@ output$generate_excel_report <- downloadHandler(
       cols = 6:11,
       rows = 15:21,
       style = createStyle(numFmt = "COMMA"),
+      gridExpand = TRUE
+    )
+    
+    addStyle(
+      to_download,
+      1,
+      rows = 14,
+      cols = 1:6,
+      style = createStyle(textDecoration = "Bold", halign = "center"),
+      gridExpand = TRUE
+    )
+    
+    addStyle(
+      to_download,
+      2,
+      rows = 14,
+      cols = 1:11,
+      style = createStyle(textDecoration = "Bold", halign = "center"),
       gridExpand = TRUE
     )
     
