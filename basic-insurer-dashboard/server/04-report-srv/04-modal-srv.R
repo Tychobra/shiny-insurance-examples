@@ -42,33 +42,10 @@ output$generate_excel_report <- downloadHandler(
   content = function(file) {
     removeModal()
     
-    ##
-    #data prep
-    ##
     
-    #
-    #table 1
-    #
+    eval_ <- input$val_date
     
-    params <- list(
-      data = trans, 
-      val_date = ymd(input$val_date)
-    )
-    
-    data_ <- if (length(params$data) == 1) readRDS("../../data/trans.RDS") else params$data
-    eval_ <- params$val_date
-    
-    loss_run <- function(val_date) {
-      data_ %>%
-        filter(transaction_date <= val_date) %>%
-        group_by(claim_num) %>%
-        top_n(1, wt = trans_num) %>%
-        ungroup() %>%
-        mutate(reported = paid + case) %>%
-        arrange(desc(transaction_date))
-    }
-    
-    lr_current <- loss_run(eval_)
+    lr_current <- val_tbl()
     lr_prior <- loss_run(eval_ - years(1))
     
     table1 <- lr_current %>%
@@ -85,6 +62,7 @@ output$generate_excel_report <- downloadHandler(
         n = n()
       ) %>%
       ungroup() %>%
+      summaryrow::blank_row() %>%
       summaryrow::totals_row(
         cols = 2:6,
         label_col = 1
@@ -106,14 +84,24 @@ output$generate_excel_report <- downloadHandler(
       left_join(lr_prior_out, by = "claim_num") %>%
       mutate(
         paid_change = paid.x - paid.y,
-        #case_change = case.x - case.y,
         reported_change = reported.x - reported.y
       ) %>%
       filter(paid_change >= 100000) %>%
-      arrange(desc(paid_change))
+      arrange(desc(paid_change)) %>%
+      summaryrow::blank_row() %>%
+      summaryrow::totals_row(
+        cols = 10:11,
+        label_col = 1
+      )
     
-    names(table2) <- c("Claim Number", "Account Date", "Claimant", "State", "Status", "Paid",
-                       "Reported", "Paid", "Paid", "Reported")
+    names(table2) <- c(
+      "Claim Number", 
+      "Accident Date", 
+      "Claimant", 
+      "State", 
+      "Status", 
+      rep(c("Paid", "Reported"), times = 3)
+    )
     
     ##
     #Workbook
@@ -121,6 +109,7 @@ output$generate_excel_report <- downloadHandler(
     
     to_download <- createWorkbook()
     
+    addWorksheet(wb = to_download, sheetName = "Cover Page")
     addWorksheet(wb = to_download, sheetName = "Exhibit 1")
     addWorksheet(wb = to_download, sheetName = "Exhibit 2")
     
@@ -129,213 +118,191 @@ output$generate_excel_report <- downloadHandler(
     
     setColWidths(
       to_download,
-      1,
+      2,
       cols = 1:6,
-      widths = c(13,10,10,10,7,9)
+      widths = c(12, 12, 12, 12, 12, 12)
     )
     
     setColWidths(
       to_download,
-      2,
+      3,
       cols = 1:11,
-      widths = c(13, 12, 18, 6, 7, 9, 9, 9, 9, 9, 9)
+      widths = c(13, 12, 18, 9, 9, 9, 9, 9, 9, 9, 9)
     )
     
     #Merge top rows to be the width of the first 6 (sheet 1) or 5 (sheet 2) columns
     
-    lapply(1:10, function(x) {
-    mergeCells(
-      to_download,
-      1,
-      cols = 1:6,
-      rows = x
-    )})
     
-    lapply(1:10, function(x) {
-      mergeCells(
-        to_download,
-        2,
-        cols = 1:5,
-        rows = x
-      )})
-    
-    #Tychobra logo, height of first 6 rows and width of first 6 columns (sheet 1)
-    #or first 5 columns (sheet 2)
-    
+    ### Cover Page
     insertImage(
       to_download,
       sheet = 1,
       file = "server/04-report-srv/images/tychobra_logo_blue_co_name.png",
-      width = 4.61,
+      width = 5.5,
       height = 1.25,
       startRow = 1,
       startCol = 1,
       units = "in",
       dpi = 300
     )
-    insertImage(
-      to_download,
-      sheet = 2,
-      file = "server/04-report-srv/images/tychobra_logo_blue_co_name.png",
-      width = 4.34,
-      height = 1.25,
-      startRow = 1,
-      startCol = 1,
-      units = "in",
-      dpi = 300
-    )
-    
-    #4 lines of text on each sheet
-    
+     
     writeData(
-      to_download,
-      1,
-      "Example Client Name",
-      startRow = 7,
-      startCol = 1
-    )
-    
-    writeData(
-      to_download,
-      1,
-      "Workers' Compensation Claims Report",
-      startRow = 8,
-      startCol = 1
-    )
-    
-    addStyle(
       to_download,
       sheet = 1,
-      rows = 7:8,
-      cols = 1,
-      style = createStyle(fontSize = 20, textDecoration = "Bold", fontName = "Bahnschrift Light Condensed")
-    )
-    
-    writeData(
-      to_download,
-      1,
-      paste0("Date Evaluated as of ", format(input$val_date, "%B %d, %Y")),
-      startRow = 9,
-      startCol = 1
-    )
-    
-    writeData(
-      to_download,
-      1,
-      paste0("Report Generated on ", format(Sys.Date(), format = "%B %d, %Y")),
+      c(
+        "Example Client Name",
+        "Workers' Compensation Report",
+        paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y")),
+        paste0("Report Generated", format(Sys.Date(), "%B %d, %Y"))
+      ),
       startRow = 10,
       startCol = 1
     )
-    
     addStyle(
       to_download,
       sheet = 1,
-      rows = 9:10,
+      rows = 10:11,
       cols = 1,
-      style = createStyle(fontSize = 18, textDecoration = "Bold", fontName = "Bahnschrift Light Condensed")
+      style = createStyle(
+        fontSize = "24",
+        textDecoration = "bold"
+      )
     )
-    
-    writeData(
-      to_download,
-      2,
-      "Example Client Name",
-      startRow = 7,
-      startCol = 1
-    )
-    
-    writeData(
-      to_download,
-      2,
-      "Workers' Compensation Claims Report",
-      startRow = 8,
-      startCol = 1
-    )
-    
     addStyle(
       to_download,
-      sheet = 2,
-      rows = 7:8,
+      sheet = 1,
+      rows = 12:13,
       cols = 1,
-      style = createStyle(fontSize = 20, textDecoration = "Bold", fontName = "Bahnschrift Light Condensed")
+      style = createStyle(
+        fontSize = "18"
+      )
     )
     
+    # Exhibits I and II
     writeData(
       to_download,
-      2,
-      paste0("Date Evaluated as of ", format(input$val_date, "%B %d, %Y")),
-      startRow = 9,
-      startCol = 1
+      sheet = 2,
+      x = c(
+        "Example Client Name",
+        "Workers' Compensation Claims Report",
+        "Summary of Loss and ALAE",
+        paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y"))
+      )
     )
-    
     writeData(
       to_download,
-      2,
-      paste0("Report Generated on ", format(Sys.Date(), format = "%B %d, %Y")),
-      startRow = 10,
-      startCol = 1
+      sheet = 3,
+      x = c(
+        "Example Client Name",
+        "Workers' Compensation Claims Report",
+        "Claims with Change in Paid >= 100K",
+        paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y"))
+      )
     )
     
-    addStyle(
+    exhibit_header_right <- function(wb, sheet, start_row, start_col, x) {
+      writeData(
+        wb = wb,
+        sheet = sheet,
+        x = x,
+        startRow = start_row,
+        startCol = start_col
+      )
+      
+      addStyle(
+        wb,
+        sheet = sheet,
+        rows = start_row:(start_row + length(x) - 1),
+        cols = start_col,
+        style = createStyle(halign = "right")
+      )
+    }
+    
+    exhibit_header_right(
       to_download,
       sheet = 2,
-      rows = 9:10,
-      cols = 1,
-      style = createStyle(fontSize = 18, textDecoration = "Bold", fontName = "Bahnschrift Light Condensed")
+      start_row = 1,
+      start_col = 6,
+      x = c(
+        "Exhibit I",
+        "Sheet 1"
+      )
+    )
+    exhibit_header_right(
+      to_download,
+      sheet = 3,
+      start_row = 1,
+      start_col = 11,
+      x = c(
+        "Exhibit II",
+        "Sheet 1"
+      )
     )
     
     #Tables and formatting
     
     writeData(
       to_download,
-      1,
+      2,
       table1,
-      startRow = 14,
-      startCol = 1
+      startRow = 9,
+      startCol = 1,
+      headerStyle = createStyle(
+        textDecoration = "Bold", 
+        halign = "center",
+        border = "bottom"
+      )
     )
     
     writeData(
       to_download,
-      2,
+      3,
       table2,
-      startRow = 14,
-      startCol = 1
+      startRow = 9,
+      startCol = 1,
+      headerStyle = createStyle(
+        textDecoration = "Bold", 
+        halign = "center",
+        border = "bottom"
+      )
     )
     
     addStyle(
       to_download,
-      1,
+      2,
       cols = 2:6,
-      rows = 15:23,
+      rows = 10:19,
       style = createStyle(numFmt = "COMMA"),
+      gridExpand = TRUE
+    )
+    addStyle(
+      to_download,
+      2,
+      cols = 1,
+      rows = 10:19,
+      style = createStyle(halign = "center"),
       gridExpand = TRUE
     )
     
     addStyle(
       to_download,
-      2,
+      3,
       cols = 6:11,
-      rows = 15:21,
+      rows = 10:19,
       style = createStyle(numFmt = "COMMA"),
       gridExpand = TRUE
     )
     
     addStyle(
       to_download,
-      1,
-      rows = 14,
-      cols = 1:6,
-      style = createStyle(textDecoration = "Bold", halign = "center"),
+      3,
+      cols = 1,
+      rows = 10:19,
+      style = createStyle(halign = "center"),
       gridExpand = TRUE
     )
     
-    addStyle(
-      to_download,
-      2,
-      rows = 14,
-      cols = 1:11,
-      style = createStyle(textDecoration = "Bold", halign = "center"),
-      gridExpand = TRUE
-    )
+    
     
     saveWorkbook(to_download, file)
   }
