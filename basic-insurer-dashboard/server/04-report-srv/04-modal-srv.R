@@ -36,43 +36,6 @@ observeEvent(input$generate_report_modal, {
 })
 
 
-create_header <- function(wb, sheet, name, row, col, col_span = 1) {
-  #row, col define the start of the header
-  #the header spans the next col_span columns
-  writeData(
-    wb,
-    sheet,
-    name,
-    startCol = col,
-    startRow = row
-  )
-  mergeCells(
-    wb,
-    sheet,
-    cols = col:(col + col_span - 1),
-    rows = row
-  )
-  addStyle(
-    wb,
-    sheet,
-    style = createStyle(textDecoration = "underline", halign = "center"),
-    rows = row,
-    cols = col
-  )
-}
-
-create_header_row <- function(wb, sheet, x, startRow, startCol) {
-  #x is a list of lists of the format
-  #list(list(name, 1), list(name, 3))
-  
-  for (i in seq_along(x)) {
-    name_num <- x[[i]]
-    create_header(wb, sheet, name_num[[1]], row = startRow, col = startCol, col_span = name_num[[2]])
-    startCol <- startCol + name_num[[2]]
-  }
-}
-
-
 output$generate_excel_report <- downloadHandler(
   filename = function(){
     paste0("claims-report-as-of-", input$val_date, ".xlsx")
@@ -305,8 +268,18 @@ output$generate_excel_report <- downloadHandler(
       )
     )
     
+    excel_helpers$create_header_row(
+      to_download,
+      2,
+      list(
+        list("Loss & ALAE", 3),
+        list("Number of Claims", 2)
+      ),
+      startRow = 8,
+      startCol = 2
+    )
     
-    create_header_row(
+    excel_helpers$create_header_row(
       to_download,
       3,
       list(
