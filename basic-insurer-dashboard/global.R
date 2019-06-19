@@ -97,10 +97,16 @@ show_names <- function(nms) {
 #' 
 #' view losses as of a specific date
 #' 
-#' @param val_date
+#' @param val_date date the valuation date of the loss run.  Claim values from `trans`
+#' will be values as of the `val_date`
+#' @param trans data frame of claims transactions
 #' 
-loss_run <- function(val_date) {
-  trans %>%
+#' @importFrom dplyr `%>%` filter group_by top_n ungroup mutate arrange
+#' 
+#' @return data frame of claims (1 claim per row) valued as of the `val_date`
+#' 
+loss_run <- function(val_date, trans_ = trans) {
+  trans_ %>%
     filter(transaction_date <= val_date) %>%
     group_by(claim_num) %>%
     top_n(1, wt = trans_num) %>%
