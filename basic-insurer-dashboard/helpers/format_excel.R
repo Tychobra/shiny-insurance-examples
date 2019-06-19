@@ -31,7 +31,10 @@
     addStyle(
       wb,
       sheet,
-      style = createStyle(textDecoration = "underline", halign = "center"),
+      style = createStyle(
+        textDecoration = c("underline", "bold"), 
+        halign = "center"
+      ),
       rows = row,
       cols = col
     )
@@ -41,7 +44,8 @@
   #' 
   #' @param wb The excel workbook
   #' @param sheet The sheet of the workbook
-  #' @param x A list of the form list(list(name, 1), list(name, 3))
+  #' @param x A list of the form `list(list("col_name", 1), list("col_name_2", 3))`. Where the first element in 
+  #' each list is the column name and the second element is the number of columns that the header should span over.
   #' @param startRow The row this function will write to 
   #' @param startCol The column where this row of names will start
   #' 
