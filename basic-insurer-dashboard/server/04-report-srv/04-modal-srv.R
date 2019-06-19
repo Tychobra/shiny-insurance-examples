@@ -201,25 +201,7 @@ output$generate_excel_report <- downloadHandler(
       )
     )
     
-    exhibit_header_right <- function(wb, sheet, start_row, start_col, x) {
-      writeData(
-        wb = wb,
-        sheet = sheet,
-        x = x,
-        startRow = start_row,
-        startCol = start_col
-      )
-      
-      addStyle(
-        wb,
-        sheet = sheet,
-        rows = start_row:(start_row + length(x) - 1),
-        cols = start_col,
-        style = createStyle(halign = "right")
-      )
-    }
-    
-    exhibit_header_right(
+    excel_helpers$exhibit_header_right(
       to_download,
       sheet = 2,
       start_row = 1,
@@ -229,7 +211,7 @@ output$generate_excel_report <- downloadHandler(
         "Sheet 1"
       )
     )
-    exhibit_header_right(
+    excel_helpers$exhibit_header_right(
       to_download,
       sheet = 3,
       start_row = 1,

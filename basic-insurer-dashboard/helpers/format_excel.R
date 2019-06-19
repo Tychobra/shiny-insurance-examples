@@ -55,8 +55,37 @@
     }
   }
   
+  #' exhibit_header_right
+  #' 
+  #' @param wb The excel workbook
+  #' @param sheet The sheet of the workbook
+  #' @param start_row The first row of the headers
+  #' @param start_col The column of the headers
+  #' @param x A vector of strings to be written to the workbook
+  #' 
+  #' @description This function writes a column of text aligned to the right
+  #' anywhere in an excel workbook
+  exhibit_header_right <- function(wb, sheet, start_row, start_col, x) {
+    writeData(
+      wb = wb,
+      sheet = sheet,
+      x = x,
+      startRow = start_row,
+      startCol = start_col
+    )
+    
+    addStyle(
+      wb,
+      sheet = sheet,
+      rows = start_row:(start_row + length(x) - 1),
+      cols = start_col,
+      style = createStyle(halign = "right")
+    )
+  }
+  
   return(list(
     "create_header" = create_header,
-    "create_header_row" =create_header_row
+    "create_header_row" =create_header_row,
+    "exhibit_header_right" = exhibit_header_right
   ))
 })()
