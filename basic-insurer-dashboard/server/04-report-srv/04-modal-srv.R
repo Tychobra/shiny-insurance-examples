@@ -151,10 +151,10 @@ output$generate_excel_report <- downloadHandler(
       to_download,
       sheet = 1,
       c(
-        "Example Client Name",
-        "Workers' Compensation Report",
-        paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y")),
-        paste0("Report Generated ", format(Sys.Date(), "%B %d, %Y"))
+        "  Example Client Name",
+        "  Workers' Compensation Report",
+        paste0("   Evaluated as of ", format(input$val_date, "%B %d, %Y")),
+        paste0("   Report Generated ", format(Sys.Date(), "%B %d, %Y"))
       ),
       startRow = 10,
       startCol = 1
