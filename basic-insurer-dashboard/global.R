@@ -9,6 +9,7 @@ library(tidyr)
 library(shinyWidgets)
 library(tychobratools)
 library(openxlsx)
+library(officer)
 
 trans <- readRDS("./data/trans.RDS")
 
