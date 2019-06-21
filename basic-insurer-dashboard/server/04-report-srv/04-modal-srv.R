@@ -17,11 +17,24 @@ observeEvent(input$generate_report_modal, {
       fluidRow(
         column(
           width = 12,
-          align = 'center',
+          align = "center",
           downloadButton2(
             "generate_excel_report",
             "Create Excel Report",
             icon = icon("file-excel"),
+            style = "width: 100%"
+          )
+        )
+      ),
+      br(),
+      fluidRow(
+        column(
+          width = 12,
+          align = "center",
+          downloadButton2(
+            "generate_ppt_report",
+            "Create PowerPoint Report",
+            icon = icon("file-powerpoint"),
             style = "width: 100%"
           )
         )
