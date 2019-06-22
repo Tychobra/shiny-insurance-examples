@@ -14,5 +14,6 @@ function(input, output, session) {
   source("server/04-report-srv/04-report-srv.R", local = TRUE)
   source("server/04-report-srv/04-modal-srv.R", local = TRUE)
   source("server/04-report-srv/04-powerpoint-srv.R", local = TRUE)
+  source("server/04-report-srv/04-excel-srv.R", local = TRUE)
 
 }
