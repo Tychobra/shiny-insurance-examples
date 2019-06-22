@@ -10,6 +10,7 @@ library(shinyWidgets)
 library(tychobratools)
 library(openxlsx)
 library(officer)
+library(flextable)
 
 trans <- readRDS("./data/trans.RDS")
 

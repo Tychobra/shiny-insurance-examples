@@ -34,7 +34,10 @@ output$generate_ppt_report <- downloadHandler(
     
     table1 <- table1[1:8, ]
     
-    names(table1) <- c("Accident Year", "Paid", "Case", "Reported", "Open", "Reported")
+    names(table1) <- c("Accident Year", "Paid", "Case", "Reported1", "Open", "Reported2")
+    
+    table1 <- flextable(table1) %>% 
+      set_header_labels(Reported1 = "Reported", Reported2 = "Reported")
     
     #table 2
     
@@ -66,9 +69,17 @@ output$generate_ppt_report <- downloadHandler(
       "Claimant", 
       "State", 
       "Status", 
-      rep(c("Paid", "Reported"), times = 3)
+      "Paid1",
+      "Reported1",
+      "Paid2",
+      "Reported2",
+      "Paid3",
+      "Reported3"
     )
 
+    table2 <- flextable(table2) %>% 
+      set_header_labels(Paid1 = "Paid", Paid2 = "Paid", Paid3 = "Paid",
+                        Reported1 = "Reported", Reported2 = "Reported", Reported3 = "Reported")
     
     example_ppt <- read_pptx() %>% 
       add_slide(layout = "Title Slide", master = "Office Theme") %>%
@@ -101,21 +112,12 @@ output$generate_ppt_report <- downloadHandler(
           paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y"))
           )
       ) %>% 
-      ph_with_table_at(
+      ph_with_flextable_at(
         value = table1,
         left = 1,
-        top = 0.5,
-        width = 8,
-        height = 5
+        top = 0.5
       ) %>%
       add_slide(layout = "Title and Content", master = "Office Theme") %>% 
-      ph_with_table_at(
-        value = table2,
-        left = 0,
-        top = 0.5,
-        width = 10,
-        height = 5
-      ) %>% 
       ph_with_text(
         type = "ftr",
         str = c(
@@ -123,6 +125,11 @@ output$generate_ppt_report <- downloadHandler(
           "Claims with charge in paid >= 100,000",
           paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y"))
         )
+      ) %>% 
+      ph_with_flextable_at(
+        value = table2,
+        left = 1,
+        top = 0.5
       )
       
     
