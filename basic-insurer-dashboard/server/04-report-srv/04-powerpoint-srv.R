@@ -32,12 +32,34 @@ output$generate_ppt_report <- downloadHandler(
         label_col = 1
       )
     
+    footers = as.character(as.vector(table1[10,]))
+    for (i in 2:6) {
+      footers[[i]] <- format(as.numeric(footers[[i]]), big.mark = ",")
+    }
+    
     table1 <- table1[1:8, ]
     
     names(table1) <- c("Accident Year", "Paid", "Case", "Reported1", "Open", "Reported2")
-    
+
     table1 <- flextable(table1) %>% 
-      set_header_labels(Reported1 = "Reported", Reported2 = "Reported")
+      set_header_labels(Reported1 = "Reported", Reported2 = "Reported") %>% 
+      add_header_row(
+        top = TRUE,
+        values = c(
+          "",
+          rep("Loss & ALAE", 3),
+          rep("Number of Claims", 2)
+        ) 
+      ) %>% 
+      merge_h(part = "header") %>% 
+      add_footer_row(values = footers, colwidths = rep(1, 6)) %>% 
+      width(width = 1.25) %>% 
+      height_all(height = 0.5) %>% 
+      colformat_num(col_keys = c("Paid", "Case", "Reported1", "Open"),
+                    big.mark = ",", digits = 0) %>% 
+      theme_booktabs() %>% 
+      align(align = "center", part = "header")
+      
     
     #table 2
     
@@ -79,9 +101,26 @@ output$generate_ppt_report <- downloadHandler(
 
     table2 <- flextable(table2) %>% 
       set_header_labels(Paid1 = "Paid", Paid2 = "Paid", Paid3 = "Paid",
-                        Reported1 = "Reported", Reported2 = "Reported", Reported3 = "Reported")
+                        Reported1 = "Reported", Reported2 = "Reported", Reported3 = "Reported") %>% 
+      add_header_row(
+        top = TRUE, 
+        values = c(
+          rep("", 5),
+          rep(paste0("As of ", format(input$val_date, "%B %d, %Y")), 2),
+          rep(paste0("As of ", format(input$val_date - years(1), "%B %d, %Y")), 2),
+          rep("Change", 2)
+        )
+      ) %>% 
+      merge_h(part = "header") %>% 
+      width(width = 0.8) %>% 
+      height_all(height = 0.75) %>% 
+      colformat_num(col_keys = c("Paid1", "Reported1", "Paid2",
+                                 "Reported2", "Paid3", "Reported3"),
+                    big.mark = ",", digits = 0) %>% 
+      theme_booktabs() %>% 
+      align(align = "center", part = "header")
     
-    example_ppt <- read_pptx() %>% 
+    ppt_report <- read_pptx() %>% 
       add_slide(layout = "Title Slide", master = "Office Theme") %>%
       ph_with_text(
         type = "ctrTitle", 
@@ -99,8 +138,8 @@ output$generate_ppt_report <- downloadHandler(
       ph_with_img_at(
         src = "server/04-report-srv/images/tychobra_logo_blue_co_name.png",
         height = 1.5,
-        width = 4,
-        left = 3,
+        width = 6,
+        left = 2,
         top = 0
       ) %>% 
       add_slide(layout = "Blank", master = "Office Theme") %>% 
@@ -114,8 +153,8 @@ output$generate_ppt_report <- downloadHandler(
       ) %>% 
       ph_with_flextable_at(
         value = table1,
-        left = 1,
-        top = 0.5
+        left = 1.3,
+        top = 0.6
       ) %>%
       add_slide(layout = "Title and Content", master = "Office Theme") %>% 
       ph_with_text(
@@ -128,11 +167,11 @@ output$generate_ppt_report <- downloadHandler(
       ) %>% 
       ph_with_flextable_at(
         value = table2,
-        left = 1,
-        top = 0.5
+        left = 0.55,
+        top = 1
       )
       
     
-    print(example_ppt, target = file)
+    print(ppt_report, target = file)
   }
 )
