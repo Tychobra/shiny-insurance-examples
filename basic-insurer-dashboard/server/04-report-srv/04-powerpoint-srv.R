@@ -128,9 +128,9 @@ output$generate_ppt_report <- downloadHandler(
           "Example Client Name",
           "Workers' Compensation Claims Report")
         ) %>% 
-      ph_with_text(
-        type = "subTitle",
-        str = c(
+      ph_with(
+        location = ph_location_type(type = "subTitle"),
+        value = c(
           paste0("Data Evaluated as of ", format(input$val_date, "%B %d, %Y")),
           paste0("Report Generated on ", format(Sys.Date(), "%B %d, %Y"))
         )
@@ -143,9 +143,9 @@ output$generate_ppt_report <- downloadHandler(
         top = 0
       ) %>% 
       add_slide(layout = "Blank", master = "Office Theme") %>% 
-      ph_with_text(
-        type = "ftr",
-        str = c(
+      ph_with(
+        location = ph_location_type(type = "ftr"),
+        value = c(
           "Exhibit 1",
           "Summary of Loss & ALAE",
           paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y"))
@@ -157,9 +157,9 @@ output$generate_ppt_report <- downloadHandler(
         top = 0.6
       ) %>%
       add_slide(layout = "Title and Content", master = "Office Theme") %>% 
-      ph_with_text(
-        type = "ftr",
-        str = c(
+      ph_with(
+        location = ph_location_type(type = "ftr"),
+        value = c(
           "Exhibit 2",
           "Claims with charge in paid >= 100,000",
           paste0("Evaluated as of ", format(input$val_date, "%B %d, %Y"))
