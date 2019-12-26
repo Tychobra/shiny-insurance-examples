@@ -8,9 +8,9 @@ library(shinythemes)
 library(tychobratools)
 
 # load data
-if (file.exists("spending-cleaned.RDS")) {
-  hospitals <- readRDS("spending-cleaned.RDS")
-  states <- readRDS("spending-state.RDS")
+if (file.exists("data/spending-hospital.RDS")) {
+  hospitals <- readRDS("data/spending-hospital.RDS")
+  states <- readRDS("data/spending-state.RDS")
 } else {
   # see "data-prep.R" file.  It will create the `dat` data frame
   # and load it in the global environment

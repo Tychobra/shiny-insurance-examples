@@ -7,21 +7,22 @@ spending <- httr::GET("https://data.medicare.gov/api/views/nrth-mfg3/rows.json")
               httr::content(as = "text") %>%
               jsonlite::fromJSON()
 
-hospitals <- dplyr::as_data_frame(spending$data)
+hospitals <- tibble::as_tibble(spending$data)
 
 names(hospitals) <- spending$meta$view$columns$name
 
 # only select columns that we want
 hospitals <- hospitals %>% 
   dplyr::select(
-    hospital = Hospital_Name, 
-    provider_id = Provider_ID, 
+    hospital = `Facility Name`, 
+    provider_id = `Facility ID`, 
     state = State, 
     period = Period, 
-    claim_type = Claim_Type, 
-    avg_hospital = Avg_Spending_Per_Episode_Hospital, 
-    avg_state = Avg_Spending_Per_Episode_State,
-    avg_nation = Avg_Spending_Per_Episode_Nation)
+    claim_type = `Claim Type`, 
+    avg_hospital = `Avg Spending Per Episode Hospital`, 
+    avg_state = `Avg Spending Per Episode State`,
+    avg_nation = `Avg Spending Per Episode Nation`
+  )
 
 
 # convert numeric columns to numeric

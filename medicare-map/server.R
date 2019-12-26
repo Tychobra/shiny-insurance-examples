@@ -14,7 +14,7 @@ function(input, output) {
   
   observeEvent(input$sel_state, {
     current_selection <- sel_states_val()
-    updated_selection <- list(as_data_frame(input$sel_state[c("abb", "name")]), current_selection)
+    updated_selection <- list(as_tibble(input$sel_state[c("abb", "name")]), current_selection)
     sel_states_val(dplyr::bind_rows(updated_selection))
   })
   
