@@ -1,0 +1,264 @@
+---
+params:
+  data: !r NA
+  val_date: !r as.Date("2019-01-31")
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{float}
+  - \usepackage{makecell}
+  - \usepackage{caption}
+output: 
+  pdf_document: 
+    keep_tex: yes
+    latex_engine: xelatex
+    includes:
+      in_header: mystyles.sty
+---
+
+```{r options, include = FALSE, eval = TRUE}
+# determine if running in Shiny or not
+is_in_shiny <- if(is.null(shiny::getDefaultReactiveDomain())) FALSE else TRUE
+if (is_in_shiny == TRUE) shiny::incProgress(amount = .05, message = "Setting Up")
+
+# packages
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(knitr)
+library(kableExtra)
+library(summaryrow)
+
+# knitr options
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+
+options(knitr.table.format = "latex")
+
+```
+
+```{r}
+val_date_display <- as.character(format(params$val_date, format = "%B %d, %Y"))
+prior_date_display <- as.character(format(params$val_date - years(1), format = "%B %d, %Y"))
+date_now <- as.character(format(Sys.Date(), format = "%B %d, %Y"))
+```
+
+\begin{titlepage}
+  
+  \setlength{\headsep}{0.4in}
+  
+  \includegraphics[width=8cm]{./images/tychobra_logo_blue_co_name}\\
+  
+  \vspace{2.5cm}
+  
+  \Huge
+   
+    \textbf{Example Client Name}\\
+    \textbf{Report of Unpaid Loss & ALAE}
+    \textbf{Workers' Compensation}
+  \Huge
+  
+  \huge
+    `r paste0("Data Evaluated as of ", val_date_display)`\\
+    `r paste0("Report Generated on ", date_now)`
+  \huge
+  \vspace{1mm}
+  
+  \Large
+   \noindent Created By Tychobra
+  \Large
+  \\
+  
+  
+  \vspace{10cm}
+  
+  \flushright{\includegraphics[width=1.5cm]{./images/tychobra-logo-blue}}
+ 
+\end{titlepage}
+
+
+\fancyhead[R]{Claims Report \\ As of `r val_date_display`}
+
+\fancyfoot[L]{\includegraphics[width=0.75cm]{./images/tychobra-logo-blue}}
+\fancyfoot[C]{\small Page \thepage\\}
+\fancyfoot[R]{`r as.character(format(Sys.time(), format = "%b %d, %Y %H:%M:%S"))`}
+
+\captionsetup[table]{labelformat=empty}
+
+\renewcommand{\arraystretch}{2}
+
+
+
+```{r data_prep, eval = TRUE}
+if (is_in_shiny) shiny::incProgress(amount = .05, message = "Loading Data")
+
+# parameters
+data_ <- if (length(params$data) == 1) readRDS("../../data/trans.RDS") else params$data
+eval_ <- params$val_date
+
+
+#' loss_run
+#' 
+#' view losses as of a specific date
+#' 
+#' @param val_date
+#' 
+loss_run <- function(val_date) {
+  data_ %>%
+    filter(transaction_date <= val_date) %>%
+    group_by(claim_num) %>%
+    top_n(1, wt = trans_num) %>%
+    ungroup() %>%
+    mutate(reported = paid + case) %>%
+    arrange(desc(transaction_date))
+}
+
+# data prep
+lr_current <- loss_run(eval_)
+lr_prior <- loss_run(eval_ - years(1))
+```
+
+
+\newpage
+### Exhibit 1
+### Summary of Loss & ALAE
+### Evaluated as of `r val_date_display`
+
+\vspace{1cm}
+
+```{r table_1, results = 'asis'}
+if (is_in_shiny == TRUE) incProgress(amount = .05, message = "Generating Table 1")
+
+by_ay <- lr_current %>%
+  mutate(
+    year = as.character(lubridate::year(accident_date)),
+    n_open = ifelse(status == "Open", 1, 0)
+  ) %>%
+  group_by(year) %>%
+  summarize(
+    paid = sum(paid),
+    case = sum(case),
+    reported = sum(reported),
+    n_open = sum(n_open),
+    n = n()
+  ) %>%
+  ungroup() %>%
+  totals_row(
+    cols = 2:6,
+    label_col = 1
+  )
+
+
+knitr::kable(
+  by_ay,
+  booktabs = TRUE,
+  linesep = "",
+  align = c(
+    "c", 
+    "r",
+    "r",
+    "r",
+    "r",
+    "r"
+  ),
+  col.names = c(
+    "Accident Year",
+    "Paid",
+    "Case",
+    "Reported",
+    "Open",
+    "Reported"
+  ),
+  #escape = FALSE,
+  digits = 0,
+  format.args = list(big.mark = ",")
+) %>%
+  row_spec(0, align = "c") %>%
+  kableExtra::row_spec(nrow(by_ay) - 1, hline_after = TRUE) %>%
+  add_header_above(c(
+    " " = 1, 
+    "Loss & ALAE" = 3,
+    "Number of Claims" = 2
+  )) %>%
+  column_spec(1, border_right = TRUE) %>%
+  kable_styling(full_width = TRUE, latex_options = c("striped"))
+```
+
+
+\newpage
+### Exhibit 2
+### Claims with change in paid >= 100,000
+### Evaluated as of `r as.character(format(eval_, format = "%B %d, %Y"))`
+
+
+\vspace{1cm}
+
+```{r table_2, results = 'asis'}
+if (is_in_shiny == TRUE) incProgress(amount = .05, message = "Generating Table 2")
+
+out <- lr_current %>%
+  select(claim_num, accident_date, claimant, state, status, paid, reported)
+
+lr_prior_out <- lr_prior %>%
+  select(claim_num, paid, reported)
+
+out <- out %>%
+  left_join(lr_prior_out, by = "claim_num") %>%
+  mutate(
+    paid_change = paid.x - paid.y,
+    #case_change = case.x - case.y,
+    reported_change = reported.x - reported.y
+  ) %>%
+  filter(paid_change >= 100000) %>%
+  arrange(desc(paid_change))
+
+headers <- c(5, 2, 2, 2)
+names(headers) <- c(
+  " ",
+  paste0("As of ", val_date_display),
+  paste0("As of ", prior_date_display),
+  paste0("Change")
+)
+
+knitr::kable(
+  out,
+  booktabs = TRUE,
+  linesep = "",
+  #longtable = TRUE,
+  align = c(
+    "c",
+    "c",
+    "l",
+    "c",
+    "c",
+    "r",
+    "r",
+    "r",
+    "r",
+    "r",
+    "r"
+  ),
+  col.names = c(
+    "Claim Number",
+    "Accident Date",
+    "Claimant",
+    "State",
+    "Status",
+    "Paid",
+    "Reported",
+    "Paid",
+    "Reported",
+    "Paid",
+    "Reported"
+  ),
+  digits = 0,
+  format.args = list(big.mark = ",")
+) %>%
+  row_spec(0, align = "c") %>%
+  add_header_above(headers) %>%
+  kable_styling(full_width = TRUE, latex_options = c("striped", "repeat_header")) %>%
+  column_spec(c(6, 8, 10), border_left = TRUE) 
+```
