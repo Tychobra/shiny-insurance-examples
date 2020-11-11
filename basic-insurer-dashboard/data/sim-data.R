@@ -19,7 +19,7 @@ accident_date <- sample(0:accident_range, size = n_claims, replace = TRUE)
 
 payment_fun <- function(n) rlnorm(n, 7.5, 1.5)
 
-claims <- dplyr::data_frame(
+claims <- tibble::tibble(
             claim_num = paste0("claim-", 1:n_claims),
             accident_date = beg_date + lubridate::days(accident_date),
             state = sample(c("TX", "CA", "GA", "FL"), size = n_claims, replace = TRUE),
