@@ -26,19 +26,19 @@ observeEvent(input$generate_report_modal, {
           )
         )
       ),
-      br(),
-      fluidRow(
-        column(
-          width = 12,
-          align = "center",
-          downloadButton2(
-            "generate_ppt_report",
-            "Create PowerPoint Report",
-            icon = icon("file-powerpoint"),
-            style = "width: 100%"
-          )
-        )
-      ),
+      # br(),
+      # fluidRow(
+      #   column(
+      #     width = 12,
+      #     align = "center",
+      #     downloadButton2(
+      #       "generate_ppt_report",
+      #       "Create PowerPoint Report",
+      #       icon = icon("file-powerpoint"),
+      #       style = "width: 100%"
+      #     )
+      #   )
+      # ),
       title = "Download Report",
       size = "s",
       footer = list(
